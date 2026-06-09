@@ -1,0 +1,6 @@
+name = Telrhin Encyclopedia
+description = Generates content for viewing entries
+core = 7.x
+version = 7.x-0.2-beta
+package = Zutworks
+dependencies[] = telrhin_functions
