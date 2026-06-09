@@ -1,0 +1,6 @@
+name = Telrhin Calendar
+description = Generates a block with current day of week, current holiday (note content hardcoded in the module file)  
+version = 7.x-1.2
+core = 7.x
+package = Zutworks
+configure = admin/config/content/telrhin_calendar
