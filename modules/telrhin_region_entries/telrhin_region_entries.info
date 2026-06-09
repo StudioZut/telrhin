@@ -1,0 +1,5 @@
+name = Telrhin Region Entries
+description = Provides blocks for displaying Encyclopaedia entries filtered by specific regions.
+core = 7.x
+version = 7.x-1.0
+package = Zutworks
