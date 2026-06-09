@@ -1,6 +1,6 @@
 name = Telrhin Encyclopedia
 description = (in progress) Generates entires at /encyclopedia/entry/42
 core = 7.x
-version = 7.x-0.1-alpha
+version = 7.x-0.2-alpha
 package = Zutworks
 dependencies[] = telrhin_functions
