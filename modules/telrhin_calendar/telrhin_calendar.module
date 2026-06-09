@@ -1,0 +1,174 @@
+<?php
+
+/**
+ * @file
+ * Provides blocks to display Telrhin calendar info.
+ */
+
+/**
+ * Implements hook_block_info().
+ */
+function telrhin_calendar_block_info() {
+  $blocks = array();
+  $blocks['telrhin_calendar_today_verbose'] = array(
+    'info' => t("Telrhin Today for Home Page (public)"),
+    'cache' => DRUPAL_CACHE_PER_PAGE, // Caches block per page to improve performance
+  );
+  $blocks['telrhin_calendar_today_sidebar'] = array(
+    'info' => t("Telrhin Today Sidebar for Calendar Page (auth user)"),
+    'cache' => DRUPAL_CACHE_PER_ROLE, // Varies cache based on if user is authenticated
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function telrhin_calendar_block_view($delta = '') {
+  $block = array();
+  
+  // Only calculate the calendar data if one of our blocks is being requested.
+  if ($delta == 'telrhin_calendar_today_verbose' || $delta == 'telrhin_calendar_today_sidebar') {
+    $cal_data = _telrhin_calendar_get_data();
+    
+    switch ($delta) {
+      case 'telrhin_calendar_today_verbose':
+        $block['title'] = t('Today in Telrhin');
+        $block['content'] = "<div class='holiday-string-verb'>" . $cal_data['holiday'] . "</div>" .
+                            "<blockquote><div class='weekday-string-verb'>" . $cal_data['weekday'] . "</div>" .
+                            "<div class='today-string-verb'>Today's date in Telrhin is " . $cal_data['date'] . "</div></blockquote>";
+        break;
+        
+      case 'telrhin_calendar_today_sidebar':
+        $block['title'] = t('Telrhin Today');
+        $block['content'] = "<div class='holiday-string-side'>" . $cal_data['holiday'] . "</div>" .
+                            "<div class='weekday-string-side'>" . $cal_data['weekday'] . "</div>" .
+                            "<blockquote><div class='today-string-side'>Today's date in Telrhin is " . $cal_data['date'] . "</div></blockquote>" . 
+                            $cal_data['auth_link'];
+        break;
+    }
+  }
+  return $block;
+}
+
+/**
+ * Helper function to calculate calendar strings dynamically.
+ * Keeps heavy logic out of the global scope and away from the database.
+ */
+function _telrhin_calendar_get_data() {
+  // --- 1. SET WEEKDAY STRING ---
+  $day_map = array(
+    'Monday'    => array('Luins, the first day of the week', 'Lors'),
+    'Tuesday'   => array('Bahrs, the second day of the week', 'Crons'),
+    'Wednesday' => array('Sein, the third day of the week', 'Savans'),
+    'Thursday'  => array('Tor, the fourth day of the week', 'Tims'),
+    'Friday'    => array('Bode, the fifth day of the week', 'Rone'),
+    'Saturday'  => array('Wahrs, the sixth day of the week', 'Vath'),
+    'Sunday'    => array('Taelens, the seventh day of the week', 'Tale'),
+  );
+  
+  $current_day = date("l");
+  $telcal = $day_map[$current_day][0];
+  $telcal2 = $day_map[$current_day][1];
+  $weekday_string = "Today is " . $telcal . " in the Lowlands. In the Empire they call it <em>" . $telcal2 . "</em> (Rayikian calendar).";
+
+  // --- 2. SET DESTINITE DATE ---
+  $month_map = array(
+    1 => "Melbid", 2 => "Romstil", 3 => "Parda", 4 => "Illom", 
+    5 => "Sillas", 6 => "Ashlom", 7 => "Relt", 8 => "Bendel", 
+    9 => "Sepper", 10 => "Bas", 11 => "Sophor", 12 => "Kellet"
+  );
+  $destinitemonth = $month_map[date("n")];
+  $destiniteday = date("j");
+
+  $dayofyear = (date("z") - 59); // date("z") gets day of year 0-365
+  if ($dayofyear < 1) {
+    $dayofyear = 364 + $dayofyear;
+  }
+
+  $season_num = ceil($dayofyear / 91);
+  $dayofseason = $dayofyear - (($season_num - 1) * 91);
+  
+  $season_names = array(1 => 'Spring', 2 => 'Summer', 3 => 'Autumn', 4 => 'Winter');
+  $seasonString = $season_names[$season_num] . " " . $dayofseason;
+  $date_string = $seasonString . " (" . $destinitemonth . " " . $destiniteday . ")";
+
+  // --- 3. SET HOLIDAY STRING ---
+  // We use "Month-Day" format (e.g., "03-01") for reliable string and range matching
+  $now_md = date("m-d"); 
+  $holString = '';
+  
+  // Note: Populate these variables with actual text. They were undefined in the original script.
+  $springtideText = "New Year's Day, a big bawdy celebration of fertility. Also celebrated as Hollin Day among Westlings. A day feast, dancing and music, and sometimes a wolf in effigy after a cruel winter. Rayikians celebrate at Septarmas."; 
+  $firstfullText = "Celebrated by druids, Dremen, and farm communities as a day of renewal. All night celebration on Fulle'en the night before. Villages in the Lowlands often celebrate this as Calving for the spring calving and spring planting: bawdy songs and men wear horns. In Akansha the court celebrates for the full week leading up to the Full, dubbed Fullwik.";
+
+  // Single date matches
+  switch ($now_md) {
+    case '03-01':
+      $holString = "<h4>Happy Springtide! And a Good Septarmas to our Rayikan friends!</h4><p>Spring 1st (Parda 1st): " . $springtideText . "</p>"; break;
+    case '03-20':
+      $holString = "<h4>Happy Fulle'en and final day of Fullwik!</h4><p>Spring 21nd (Parda 21st): " . $firstfullText . "</p>"; break;
+    case '04-21':
+      $holString = "<h4>Happy Myr Day and Longmondi! Long Live the Baron!</h4><p>Spring 51st (Illom 21st): a celebration in the citystate of Lark-Han...</p>"; break;
+    case '05-31':
+      $holString = "<h4>Great Victory Day to our Damoran friends!</h4><p>Spring 91st (Sillas 31st): Pronounced victor-dee...</p>"; break;
+    case '06-21':
+      $holString = "<h4>Merry Second Full and Happy Blacktide! And a fine Awakening Day to our Rayikan friends!</h4><p>Summer 21st (Ashlom 21st)...</p>"; break;
+    case '06-24':
+      $holString = "<h4>Happy Feast of Seneca to our Rayikan friends!</h4><p>Summer 24th (Ashlom 24th)...</p>"; break;
+    case '07-10':
+      $holString = "<h4>Merry Tarn! A toast to 'Good King Endrik'</h4><p>Summer 40th (Relt 10th)...</p>"; break;
+    case '07-30':
+      $holString = "<h4>Merry Sabbess! And Happy Mehrgan to our Boradun friends!</h4><p>Autumn 30th (Sepper 30)...</p>"; break;
+    case '08-06':
+    case '08-07':
+      $holString = "<h4>Carnutes</h4><p>Summer 66-67th (Bendel 6-7th): the key festival among the druidic cults...</p>"; break;
+    case '09-21':
+      $holString = "<h4>A safe Third Full to everyone!</h4><p>Autumn 21st (Sepper 21st)...</p>"; break;
+    case '11-30': // Adjusted from Nov 31 (invalid date) to Nov 30
+      $holString = "<h4>Happy High Hog Day</h4><p>Autumn 91 (Sophor 31st)...</p>"; break;
+    case '12-03':
+      $holString = "<h4>Merry Kingtide to our Ausgourdian friends!</h4><p>Winter 3rd (Kellet 3rd)...</p>"; break;
+    case '12-21':
+      $holString = "<h4>A fine Warsend Day to you, and a Blessed Quartering Day to those who celebrate it</h4><p>Winter 21st (Kellet 21st)...</p>"; break;
+    case '02-06':
+      $holString = "<h4>Happy Midwinter's Day!</h4><p>Winter 66th (Romstil 6th)...</p>"; break;
+    case '02-21':
+      $holString = "<h4>A Happy Gracemas to our Rayikian friends!</h4><p>Winter 81st (Romstil 21st)...</p>"; break;
+    case '03-02': // Adjusted from Feb 31 (invalid)
+    case '03-03': // Depending on leap year intent
+      $holString = "<h4>A Merry Day of Iron to our Boradun friends!</h4><p>Winter 91st (Romstil 31st)...</p>"; break;
+    case '05-18':
+    case '08-18':
+    case '11-18':
+    case '02-18':
+      $holString = "<h4>A Good Carn Dur to everyone!</h4><p>Carn Dur (also called Thiefbane), celebrated every 78th...</p>"; break;
+  }
+
+  // Date Range matches (using proper chronological string comparison)
+  if (empty($holString)) {
+    if ($now_md >= '08-08' && $now_md <= '08-14') {
+      $holString = "<h4>Joyous Bokat!</h4><p>Summer 68th-74nd (Bendel 8-14): A Meledian and Astavian week of feasts...</p>";
+    } elseif ($now_md >= '04-18' && $now_md <= '04-25') {
+      $holString = "<h4>Good Orhwik to you!</h4><p>Summer 18th to 25th (Ashlom 18-25): The Summer Concordance...</p>";
+    } elseif ($now_md >= '10-18' && $now_md <= '10-25') {
+      $holString = "<h4>Good Orhwik to you!</h4><p>Winter 18th to 25th (Kellet 18-25): The Winter Concordance...</p>";
+    } elseif ($now_md >= '11-05' && $now_md <= '11-11') {
+      $holString = "<h4>Happy Cullwik! (Blood Week)</h4><p>Autumn 66th-72nd (Sophor 5th-11th): The fall culling of the herds, 'flesh week' for all the prized extra meat served at meals. A time of feasts and celebration, with animal sacrifices to the gods. Often celebrated with animal masks and necklaces full of papier-mache animal parts like livers, hearts, ears, and the occasional dong.</p>";
+    }
+  }
+
+  // --- 4. SET AUTH USER LINK ---
+  global $user;
+  $auth_link = '';
+  if ($user->uid) {
+    $auth_link = "<p>[<a href='/world/calendar' title='click here for more information on holidays, moon phases and the Telrhin calendar'>calendar, moon phases and holidays</a>]</p>";
+  }
+
+  return array(
+    'weekday'   => $weekday_string,
+    'date'      => $date_string,
+    'holiday'   => $holString,
+    'auth_link' => $auth_link,
+  );
+}
