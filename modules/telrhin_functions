@@ -1,0 +1,76 @@
+<?php
+/**
+ * Common functions I need.
+ */
+
+function getzutdb() {
+  // establish connection with 'encyclopedia' db
+  global $databases;
+
+  // Check if the credentials exist in settings.php to prevent fatal errors
+  if (!isset($databases['encyclopedia']['default'])) {
+    watchdog('telrhin_functions', 'Encyclopedia DB credentials missing from settings.php.', array(), WATCHDOG_ERROR);
+    return FALSE;
+  }
+
+  // Safely grab the connection details
+  $db_info  = $databases['encyclopedia']['default'];
+
+  $dbserver = $db_info['host'];
+  $dbuser   = $db_info['username'];
+  $dbpass   = $db_info['password'];
+  $dbname   = $db_info['database'];
+  $dbport   = isset($db_info['port']) ? $db_info['port'] : 3306;
+
+  // Establish the mysqli connection using the dynamic variables AND the port
+  $DBConnect = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname, $dbport);
+
+  if (!$DBConnect) {
+    watchdog('telrhin_functions', 'Failed to connect to encyclopedia database: ' . mysqli_connect_error(), array(), WATCHDOG_ERROR);
+    return FALSE;
+  }
+
+  return $DBConnect;
+}
+
+// pull directly form Drupal db
+function getdb() {
+  // Access Drupal's global database configuration array
+  global $databases;
+
+  // Safely grab the default connection details from settings.php
+  $db_info  = $databases['default']['default'];
+
+  $dbserver = $db_info['host'];
+  $dbuser   = $db_info['username'];
+  $dbpass   = $db_info['password'];
+  $dbname   = $db_info['database'];
+
+  // Establish the mysqli connection using the dynamic variables
+  $DBConnect = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname);
+  
+  // Optional: add basic error handling if the connection fails
+  if (!$DBConnect) {
+    watchdog('telrhin_functions', 'Failed to connect to database: ' . mysqli_connect_error(), array(), WATCHDOG_ERROR);
+    return FALSE;
+  }
+
+  return $DBConnect;
+}
+
+# truncation used for db output
+function myTruncate($string, $limit, $break=" ", $pad="...") {
+  // Use Drupal's multibyte-safe string length checker
+  if (drupal_strlen($string) <= $limit) {
+    return $string;
+  }
+
+  // If a break character is passed, enable Drupal's "wordsafe" mode
+  $wordsafe = !empty($break) ? TRUE : FALSE;
+
+  // Truncate the string safely WITHOUT Drupal's default ellipsis
+  $truncated = truncate_utf8($string, $limit, $wordsafe, FALSE);
+
+  // Append the custom pad string exactly as the original function did
+  return $truncated . $pad;
+}
