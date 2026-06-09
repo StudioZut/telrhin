@@ -7,18 +7,17 @@
 
 /**
  * Implements hook_block_info().
- * Define your distinct blocks here. You can add as many as you need.
  */
-function telrhin_encyc_block_info() {
+function telrhin_region_entries_block_info() {
   $blocks = array();
 
   $blocks['encyc_south_east'] = array(
-    'info' => t('Encyc: Southlands & Eastholm Entries (Endorian Bay)'),
+    'info' => t('Encyc: Southlands & Eastholm (Endorian Bay)'),
     'cache' => DRUPAL_CACHE_PER_PAGE,
   );
   
   $blocks['encyc_westlands'] = array(
-    'info' => t('Encyc: Borderlands Entries'),
+    'info' => t('Encyc: Borderlands of Wallendahr'),
     'cache' => DRUPAL_CACHE_PER_PAGE,
   );
 
@@ -27,24 +26,26 @@ function telrhin_encyc_block_info() {
 
 /**
  * Implements hook_block_view().
- * This acts as the router, sending specific variables to your helper function.
  */
-function telrhin_encyc_block_view($delta = '') {
+function telrhin_region_entries_block_view($delta = '') {
   $block = array();
+
+  // Set the universal block title for all blocks in this module
+  $block['subject'] = t('Encyclopaedia Telrhinica');
 
   switch ($delta) {
     case 'encyc_south_east':
-      $block['subject'] = t('Encyclopaedia Entries with the Southlands and Eastholm:');
-      // Pass the specific Region IDs (2 and 4) to the helper function
-      $block['content'] = _telrhin_encyc_render_list(array(2, 4));
+      // Define the subtitle text for this specific block
+      $region_text = t('Entries with the Southlands & Eastholm (Endorian Bay):');
+      // Pass both the Region IDs and the subtitle text to the helper function
+      $block['content'] = _telrhin_region_entries_render_list(array(2, 4), $region_text);
       break;
 
     case 'encyc_westlands':
-      $block['subject'] = t('Encyclopaedia Entries for the Borderlands of Wallendahr:');
-      // Pass a different Region ID (e.g., 1) to the same helper function
-      $block['content'] = _telrhin_region_entries_render_list(array(8));
+      // Define the subtitle text for this specific block
+      $region_text = t('Entries for the Borderlands of Wallendahr:');
+      $block['content'] = _telrhin_region_entries_render_list(array(8), $region_text);
       break;
-
   }
 
   return $block;
@@ -52,14 +53,14 @@ function telrhin_encyc_block_view($delta = '') {
 
 /**
  * Helper function: Executes the database query and formats the HTML.
- * 
- * @param array $region_ids
- *   An array of numeric Region IDs to filter by.
- * 
- * @return string
- *   The formatted HTML list.
+ * * @param array $region_ids
+ * An array of numeric Region IDs to filter by.
+ * @param string $region_text
+ * The descriptive subtitle to display above the list.
+ * * @return string
+ * The formatted HTML list.
  */
-function _telrhin_encyc_render_list($region_ids = array()) {
+function _telrhin_region_entries_render_list($region_ids = array(), $region_text = '') {
   // Ensure we have IDs to query
   if (empty($region_ids)) {
     return '';
@@ -94,10 +95,17 @@ function _telrhin_encyc_render_list($region_ids = array()) {
   }
 
   // Build the HTML
-  $output = '<div style="margin-top: 1em; font-size:.8em; line-height:1.3em;">';
+  $output = '';
+  
+  // Add the descriptive subtitle text right before the list
+  if (!empty($region_text)) {
+    $output .= '<h4>' . $region_text . '</h4>';
+  }
+
+  $output .= '<div style="margin-top: 1em; font-size:.8em; line-height:1.3em;">';
   $output .= '<ul>';
 
-  // Use a standard while loop instead of do/while to prevent empty list items
+  // Loop through the results and build list items
   while ($row = mysqli_fetch_assoc($result)) {
     // Wrap database output in htmlspecialchars to prevent XSS formatting bugs
     $id = (int) $row['EntryID'];
