@@ -1,0 +1,106 @@
+<?php
+
+function telrhin_encyclopedia_menu() {
+  // Use a wildcard '%' to tell Drupal to expect a variable here
+  $items['encyclopedia/entry/%'] = array(
+    'title' => 'Encyclopedia Entry',
+    'page callback' => 'telrhin_encyclopedia_entry',
+    // Pass the wildcard (which is in position 2: 0/1/2) to the callback function
+    'page arguments' => array(2), 
+    'access arguments' => array('access content'),
+  );
+
+  return $items;
+}
+
+// The function now receives the ID directly from the URL via Drupal
+function telrhin_encyclopedia_entry($entryid = '1') {
+
+  // SECURITY: Force the ID to be an integer. 
+  // If someone passes 'abc' or malicious SQL, it becomes 0.
+  $thisrecord = (int) $entryid;
+  
+  // Fallback to entry 1 if a completely invalid ID was provided
+  if ($thisrecord === 0) {
+    $thisrecord = 1;
+  }
+
+  // Get the database connection (relies on telrhin_functions module)
+  $conn = getzutdb();
+
+  // If the database connection failed, fail gracefully
+  if (!$conn) {
+    return '<p>Error: Unable to connect to the encyclopedia database at this time.</p>';
+  }
+
+  // Fetch the main entry data
+  $sql = "SELECT Name, Name_Variants, MapGrid, MapGrid_Sub, EntryID, Description_Public, Description_New, Description_Old, Notes_Alex, Title, Gender FROM Telrhin WHERE EntryID = $thisrecord";
+  $result = mysqli_query($conn, $sql);
+  $row = mysqli_fetch_assoc($result);
+
+  // If no record exists for this ID, handle the 404 gracefully
+  if (!$row) {
+    mysqli_close($conn);
+    return '<p>Encyclopedia entry not found.</p>';
+  }
+
+  // Fetch associated data
+  $sql2 = "SELECT t.* FROM Enc_Regions_Assoc et JOIN Enc_Regions t ON et.RegionID = t.RegionID WHERE et.EntryID = $thisrecord";
+  $result2 = mysqli_query($conn, $sql2);
+  $row2 = mysqli_fetch_assoc($result2);
+
+  $sql3 = "SELECT t.* FROM Enc_Races_Assoc et JOIN Enc_Races t ON et.RaceID = t.RaceID WHERE et.EntryID = $thisrecord";
+  $result3 = mysqli_query($conn, $sql3);
+  $row3 = mysqli_fetch_assoc($result3);
+
+  $sql4 = "SELECT t.* FROM Enc_Period_Assoc et JOIN Enc_Period t ON et.PeriodID = t.PeriodID WHERE et.EntryID = $thisrecord";
+  $result4 = mysqli_query($conn, $sql4);
+  $row4 = mysqli_fetch_assoc($result4);
+
+  // ---------------------------------------------------------
+  // GET THE TOTAL ENTRY COUNT (Using COUNT for performance)
+  // ---------------------------------------------------------
+  $count_sql = "SELECT COUNT(EntryID) AS total FROM Telrhin";
+  $count_result = mysqli_query($conn, $count_sql);
+  
+  // Assign the result directly to $num_rows to keep existing templates working
+  if ($count_result) {
+    $count_row = mysqli_fetch_assoc($count_result);
+    $num_rows = $count_row['total']; 
+  } else {
+    $num_rows = 0; // Fallback if the query fails
+  }
+
+  // Determine Gender String
+  switch ($row['Gender']) {
+    case 1:
+      $gendername = 'Male';
+      break;
+    case 2:
+      $gendername = 'Female';
+      break;
+    case 3:
+      $gendername = 'Other';
+      break;
+    default:
+      $gendername = 'N/A';
+  }
+
+  // Build the page output
+  $pageoutput = "(placeholder entry content for " . htmlspecialchars($row['Name']) . " - ID: $thisrecord)";
+  
+  // Append the total count message using the preserved variable
+  $pageoutput .= "<br><br><strong>There are " . $num_rows . " entries</strong> in the Encyclopaedia.";
+
+  // Always close the external connection when you are done with it
+  mysqli_close($conn);
+
+  $content['raw_markup'] = array(
+    '#type' => 'markup',
+    '#markup' => '<p>' . $pageoutput . '</p>',
+  );
+
+  return $content;
+}
+
+function telrhin_ency
