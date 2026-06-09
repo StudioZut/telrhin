@@ -1,0 +1,119 @@
+<?php
+/**
+ * @file
+ * Generates a block displaying a random encyclopedia entry for the header.
+ */
+
+/**
+ * Implements hook_block_info().
+ */
+function telrhin_header_entry_block_info() {
+  $blocks['header_encyclopedia_entry'] = array(
+    'info' => t('Header Encyclopedia Entry'),
+    // We disable caching for this specific block so it generates a 
+    // new random entry on every single page load.
+    'cache' => DRUPAL_NO_CACHE, 
+  );
+  
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function telrhin_header_entry_block_view($delta = '') {
+  $block = array();
+
+  if ($delta == 'header_encyclopedia_entry') {
+    // We omit $block['subject'] here so the block has no title,
+    // relying instead on the italicized intro text in your script.
+    $block['content'] = telrhin_header_entry_get_content();
+  }
+
+  return $block;
+}
+
+/**
+ * Helper function to query the DB and generate content.
+ */
+function telrhin_header_entry_get_content() {
+  // Establish connection using the centralized function
+  $conn = getzutdb();
+
+  // Fail gracefully if the database is unreachable
+  if (!$conn) {
+    return ''; 
+  }
+
+  // Fetch a random active, non-religious entry
+  $sql = "SELECT Name, Description_Public, Title, EntryID FROM Telrhin WHERE Work_New = 1 AND isReligion = 0 ORDER BY rand() LIMIT 1";
+  $result = mysqli_query($conn, $sql);
+  $row = mysqli_fetch_assoc($result);
+
+  // If the query fails or returns empty, close connection and abort
+  if (!$row) {
+    mysqli_close($conn);
+    return '';
+  }
+
+  // 1. Sanitize all variables before they touch the HTML
+  $title = check_plain($row['Title']);
+  $name  = check_plain($row['Name']);
+  $desc  = $row['Description_Public'];
+  $entry_id = (int) $row['EntryID'];
+
+  // 2. Build the output string
+  $output = "<div class='telrhin-header-block'>";
+  $output .= "<p style='font-style: italic; font-size: 1em;'>Random entry from the Encyclopaedia Telrhinica:</p>";
+  
+  // trim() ensures no weird gaps if Title is empty
+  $output .= "<p><strong>" . trim($title . ' ' . $name) . "</strong>"; 
+
+  // 3. Handle the Description Truncation
+  if (!empty($desc)) {
+    $limit = 200;
+    
+    // If it naturally fits within the limit
+    if (drupal_strlen($desc) <= $limit) {
+      // Strip trailing periods or spaces from the DB, then add one clean period
+      $clean_desc = rtrim(trim($desc), '. ');
+      $output .= "<br>" . check_plain($clean_desc) . ".</p>";
+    } 
+    // If it exceeds the limit, use our custom function to chop it safely
+    else {
+      $truncated_desc = myTruncate($desc, $limit, " ", " ...(truncated)");
+      $output .= "<br>" . check_plain($truncated_desc) . "</p>";
+    }
+  } 
+  else {
+    $output .= "<br>(there is no public description for this entry)</p>";
+  }
+
+  // 4. Handle Administrator Links
+  global $user;
+  
+  // Check if the current user belongs to the AdminGroup
+  if (in_array('AdminGroup', array_values($user->roles))) {
+    
+    // Use Drupal's url() API to safely build the internal view link
+    $view_url = url('encyc/view', array('query' => array('encycid' => $entry_id)));
+    // Hardcode the legacy ColdFusion edit link
+    $edit_url = "http://studiozut.com/admin/enc_edit.cfm?id=" . $entry_id;
+    
+    $output .= "<p class='telrhin-admin-tools'>";
+    $output .= "[ <a href='" . check_plain($view_url) . "' title='full view this record'>view</a> ] ";
+    $output .= "[ <a href='" . check_plain($edit_url) . "' title='edit this entry on the old StudioZut site' target='_blank'>edit</a> ]";
+    $output .= "</p>";
+  }
+
+  $output .= "</div>";
+
+  // Always close the external connection when finished
+  mysqli_close($conn);
+
+  // Return the output as a Drupal render array
+  return array(
+    '#type' => 'markup',
+    '#markup' => $output,
+  );
+}
