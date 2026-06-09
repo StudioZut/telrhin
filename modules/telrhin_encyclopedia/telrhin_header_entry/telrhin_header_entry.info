@@ -1,0 +1,6 @@
+name = Telrhin Header Entry
+description = Generates a block for the Header that pulls a random entry from the encyclopedia 
+core = 7.x
+version = 7.x-0.2-beta
+package = Zutworks
+dependencies[] = telrhin_functions
