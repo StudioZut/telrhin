@@ -1,0 +1,113 @@
+<?php
+
+/**
+ * @file
+ * Provides blocks for displaying Encyclopaedia entries by region.
+ */
+
+/**
+ * Implements hook_block_info().
+ * Define your distinct blocks here. You can add as many as you need.
+ */
+function telrhin_encyc_block_info() {
+  $blocks = array();
+
+  $blocks['encyc_south_east'] = array(
+    'info' => t('Encyc: Southlands & Eastholm Entries (Endorian Bay)'),
+    'cache' => DRUPAL_CACHE_PER_PAGE,
+  );
+  
+  $blocks['encyc_westlands'] = array(
+    'info' => t('Encyc: Borderlands Entries'),
+    'cache' => DRUPAL_CACHE_PER_PAGE,
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ * This acts as the router, sending specific variables to your helper function.
+ */
+function telrhin_encyc_block_view($delta = '') {
+  $block = array();
+
+  switch ($delta) {
+    case 'encyc_south_east':
+      $block['subject'] = t('Encyclopaedia Entries with the Southlands and Eastholm:');
+      // Pass the specific Region IDs (2 and 4) to the helper function
+      $block['content'] = _telrhin_encyc_render_list(array(2, 4));
+      break;
+
+    case 'encyc_westlands':
+      $block['subject'] = t('Encyclopaedia Entries for the Borderlands of Wallendahr:');
+      // Pass a different Region ID (e.g., 1) to the same helper function
+      $block['content'] = _telrhin_region_entries_render_list(array(8));
+      break;
+
+  }
+
+  return $block;
+}
+
+/**
+ * Helper function: Executes the database query and formats the HTML.
+ * 
+ * @param array $region_ids
+ *   An array of numeric Region IDs to filter by.
+ * 
+ * @return string
+ *   The formatted HTML list.
+ */
+function _telrhin_encyc_render_list($region_ids = array()) {
+  // Ensure we have IDs to query
+  if (empty($region_ids)) {
+    return '';
+  }
+
+  // Connect to your external database
+  $query = getzutdb();
+  if (!$query) {
+    return '<p>Error: Could not connect to the encyclopedia database.</p>';
+  }
+
+  // Security step: Force all inputs to be integers to prevent SQL injection,
+  // then implode them back into a comma-separated string (e.g., "2,4").
+  $clean_ids = implode(',', array_map('intval', $region_ids));
+
+  $sql = "
+    SELECT Telrhin.EntryID, Telrhin.Name, Telrhin.Description_Public 
+    FROM Telrhin 
+    LEFT JOIN Enc_Regions_Assoc 
+      ON Telrhin.EntryID = Enc_Regions_Assoc.EntryID 
+    WHERE Telrhin.Work_New = 1 
+      AND Telrhin.isReligion = 0 
+      AND Enc_Regions_Assoc.RegionID IN ($clean_ids) 
+    ORDER BY Telrhin.Name ASC
+  ";
+  
+  $result = mysqli_query($query, $sql);
+
+  // Handle empty states gracefully
+  if (!$result || mysqli_num_rows($result) == 0) {
+    return '<p>No entries found for this region.</p>';
+  }
+
+  // Build the HTML
+  $output = '<div style="margin-top: 1em; font-size:.8em; line-height:1.3em;">';
+  $output .= '<ul>';
+
+  // Use a standard while loop instead of do/while to prevent empty list items
+  while ($row = mysqli_fetch_assoc($result)) {
+    // Wrap database output in htmlspecialchars to prevent XSS formatting bugs
+    $id = (int) $row['EntryID'];
+    $name = htmlspecialchars($row['Name']);
+    $desc = htmlspecialchars($row['Description_Public']);
+    
+    $output .= "<li><strong><a href='/encyc/view?encycid={$id}' title='full view this record'>{$name}</a></strong><br />{$desc}</li>";
+  }
+
+  $output .= '</ul></div>';
+
+  return $output;
+}
