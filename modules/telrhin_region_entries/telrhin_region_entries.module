@@ -112,7 +112,7 @@ function _telrhin_region_entries_render_list($region_ids = array(), $region_text
     $name = htmlspecialchars($row['Name']);
     $desc = htmlspecialchars($row['Description_Public']);
     
-    $output .= "<li><strong><a href='/encyc/view?encycid={$id}' title='full view this record'>{$name}</a></strong><br />{$desc}</li>";
+    $output .= "<li><strong><a href='/encyclopedia/entry/{$id}' title='full view this record'>{$name}</a></strong><br />{$desc}</li>";
   }
 
   $output .= '</ul></div>';
