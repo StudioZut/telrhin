@@ -1,57 +1,77 @@
-# Telrhin
+# The World of Telrhin
 
-> Telrhin is a long-running tabletop RPG campaign setting centered on the continent of Numarha, within a cosmology of Three Worlds. The site is the home for its campaigns past and present — not a commercial product. It hosts worldbuilding content (encyclopedia entries, calendar/holidays, campaign session logs) for players and friends of the campaign.
+> Telrhin is a homebrew sword & sorcery tabletop RPG campaign setting in continuous development since 1981. It's a late-medieval, magic-and-dragons fantasy world built on a dark cosmology: two entwined creator gods, a dying "Great Dream" drifting toward an apocalyptic "Edge of Waking," and gods who secretly feed on mortal death to survive. This site is the personal home base for the setting and its campaigns — not a commercial product.
 
-Telrhin was conceived by two titanic beings, Hael and Syr, as the Great Dream — a vast magical reality now drifting toward a cosmic precipice called the Ehtre. If reality crosses into Wake, the slumbering Serpent Earth will rouse, shattering the dream into a sterile era of reason and destroying the gods. The gods, in turn, secretly feed on the "Dying Glow" released by mortal death to sustain their refuge, Atavis, orchestrating wars, plagues, and famine. In the mortal world of Prime, an early-renaissance civilization (the city-state of Larakan, the ruins of the fallen Destinite Empire, the Boradun's abandoned burrowdelfs) remains largely oblivious, while the Iron King wages the Red War in the south, the eldritch Ignum stir beneath the earth, and the demigod Talon the Severed Queen schemes to unmake reality.
+The site documents 40+ years of a home-grown campaign world (city-state of Larakan, the Boradun burrowdelfs, the fallen Destinite Empire, and more), the house rules used to run it (Stabmaster, Fat Dragon, "Stabdragon," and Dragonbane with homebrew additions), and the campaigns currently in play (Endorian Bay in Dragonbane, Hill East in D&D 5E). Most deep-reference material — the full Field Guide, the Encyclopaedia Telrhinica campaign database, complete campaign logs, and the full site menu — is gated to players and friends. The blog contains public lore excerpts, world-design essays, and campaign history. Author: Christian Aldridge.
 
-The site is maintained by Christian Aldridge, a web developer and technology director for an environmental NGO, and former game designer (Hubris Games — Maelstrom Storytelling, Story Engine). Telrhin has evolved over roughly 40 years of campaigns, with significant contributions from Alex Oram, Ian Dickson, Seth Lindberg, Corbin Small, and Mike Steiner.
+## Start Here
 
-## Setting
+- [Homepage](https://www.telrhin.com/): Setting overview — the cosmology, current campaigns, house rules, and what's publicly available on the site.
+- [About](https://www.telrhin.com/about): About the site, its author, and the friends who contributed to the setting; notes on what's public vs. gated to players.
+- [Blog index](https://www.telrhin.com/blog): Full chronological list of lore, design, and campaign posts.
 
-- [About](https://www.telrhin.com/about): Site background, author bio, and a quick-reference kernel of setting facts (the three-world cosmology, the Kaladri elves' dark secrets, the Boradun dwarves' dark secrets, the Oneiros Dreamworld, the Golden Queen's wars)
+## World & Cosmology
 
-## Blog
+- [Serpent Earth](https://www.telrhin.com/blog/serpent-earth): The founding myth of Serpent Earth and the world's drift toward the "Edge of Waking."
+- [Three Worlds](https://www.telrhin.com/blog/three-worlds): The cosmology of the Three Worlds (Prime, the Umbra, and the Ember/Oneiros).
+- [The World Story](https://www.telrhin.com/blog/world-story): Broad strokes of the Serpent Earth monomyth underlying the setting.
+- [The World: A Bedtime Story](https://www.telrhin.com/blog/world-bedtime-story): An origin tale for how Telrhin came to be.
+- [The Central Story](https://www.telrhin.com/blog/the-central-story): The core narrative thread tying the setting together.
+- [Origins](https://www.telrhin.com/blog/origins): On the origins of the Telrhin setting.
+- [Revisiting the Origin Story](https://www.telrhin.com/blog/revisiting-the-origin-story): Later musings on the setting's origin tale and world design.
+- [Philosophy in a World of Gods and Magic](https://www.telrhin.com/blog/philosophy-in-a-world-of-gods-and-magic): How philosophy and belief function inside a world with literal gods and magic.
+- [The Gods Want You to Die](https://www.telrhin.com/blog/the-gods-want-you-to-die): On the true, parasitic nature of Telrhin's gods.
+- [Lost Gods](https://www.telrhin.com/blog/lost-gods): The lost or forgotten gods of the setting.
+- [Tala the Wise](https://www.telrhin.com/blog/tala-the-wise): The figure of Tala the Wise.
+- [Divine Empress](https://www.telrhin.com/blog/divine-empress): The Divine Empress and her role in the setting.
+- [Severed Queen](https://www.telrhin.com/blog/severed-queen): Talon, the Severed Queen, who seeks to unmake reality.
+- [Court of Kalidahr](https://www.telrhin.com/blog/court-of-kalidahr): The Court of Kalidahr Irongrip — faie courts and politics.
+- [Valek Social Factions](https://www.telrhin.com/blog/valek-social-factions): Social factions in Valek.
+- [Normal Folks in a World of Monsters](https://www.telrhin.com/blog/normal-folks-in-a-world-of-monsters): How ordinary people live and cope in a world full of monsters.
+- [The Pox Crain](https://www.telrhin.com/blog/the-pox-crain): The Pox Crain — a place where things are more than they seem.
+- [God Meat / Sylas Cult](https://www.telrhin.com/blog/god-meat-sylas-cult): The cult of Sylas and the concept of "god meat."
+- [Rakshem](https://www.telrhin.com/blog/rakshem): The setting element of Rakshem.
+- [Eloche](https://www.telrhin.com/blog/eloche): Eloche, the First City, torn from the earth by the gods.
+- [Sky Above](https://www.telrhin.com/blog/sky-above): The sky and heavens of Telrhin.
+- [The Ninth City](https://www.telrhin.com/blog/the-ninth-city): The Ninth City.
+- [Valley of Drowned Kings](https://www.telrhin.com/blog/valley-drowned-kings): The Valley of Drowned Kings.
+- [City of Pearl](https://www.telrhin.com/blog/city-of-pearl): The City of Pearl.
+- [Quartz Sea](https://www.telrhin.com/blog/quartz-sea): The Quartz Sea.
+- [Paths of the Chimerum](https://www.telrhin.com/blog/paths-of-the-chimerum): The Chimerum and its paths.
+- [Kobolds](https://www.telrhin.com/blog/kobolds): Kobolds as they appear in the Telrhin setting.
+- [De-Elfing the Fantasy World](https://www.telrhin.com/blog/de-elfing-the-fantasy-world): Design notes on reworking classic fantasy races (elves, dwarves, etc.) for the setting.
+- [Indago](https://www.telrhin.com/blog/indago): On the spirit of exploration and investigation ("indago") behind the setting.
+- [What's Fashion if not a Codpiece](https://www.telrhin.com/blog/whats-fashion-if-not-a-codpiece): On panache, style, and fashion within the game world.
+- [Ravines and Other Killers](https://www.telrhin.com/blog/ravines-and-other-killers): Wilderness hazards and campaign mishaps.
 
-Session logs, worldbuilding notes, and campaign history, at `https://www.telrhin.com/blog/*`. Selected entries:
+## Campaigns, Actual Play & Site History
 
-- [The Adventure Log Lives](https://www.telrhin.com/blog/the-adventure-log-lives): Campaign session log updates
-- [Revisiting the Origin Story](https://www.telrhin.com/blog/revisiting-the-origin-story): Telrhin's founding/origin narrative
-- [World Story](https://www.telrhin.com/blog/world-story): Overview of the world's central narrative
-- [The Central Story](https://www.telrhin.com/blog/the-central-story): The setting's core storyline
-- [Three Worlds](https://www.telrhin.com/blog/three-worlds): The Three Worlds cosmology
-- [Lost Gods](https://www.telrhin.com/blog/lost-gods): Divine lore
-- [The Gods Want You to Die](https://www.telrhin.com/blog/the-gods-want-you-to-die): The gods' dependence on the "Dying Glow"
-- [Severed Queen](https://www.telrhin.com/blog/severed-queen): Talon the Severed Queen
-- [Divine Empress](https://www.telrhin.com/blog/divine-empress): Divine lore
-- [Court of Kalidahr](https://www.telrhin.com/blog/court-of-kalidahr): Regional/political lore
-- [Valley Drowned Kings](https://www.telrhin.com/blog/valley-drowned-kings): Regional lore
-- [The Ninth City](https://www.telrhin.com/blog/the-ninth-city): Regional/city lore
-- [Eloche](https://www.telrhin.com/blog/eloche): The First City, taken by the gods to form Atavis
-- [Serpent Earth](https://www.telrhin.com/blog/serpent-earth): The slumbering entity tied to the Ehtre/Wake cosmology
-- [The Pox Crain](https://www.telrhin.com/blog/the-pox-crain): Setting lore
-- [Kobolds](https://www.telrhin.com/blog/kobolds): Race/creature lore
-- [Valek Social Factions](https://www.telrhin.com/blog/valek-social-factions): Social/political factions
-- [God Meat: Sylas Cult](https://www.telrhin.com/blog/god-meat-sylas-cult): Cult/religion lore
-- [Tala the Wise](https://www.telrhin.com/blog/tala-the-wise): Character/NPC lore
-- [Philosophy in a World of Gods and Magic](https://www.telrhin.com/blog/philosophy-in-a-world-of-gods-and-magic): Thematic/philosophical worldbuilding essay
-- [Normal Folks in a World of Monsters](https://www.telrhin.com/blog/normal-folks-in-a-world-of-monsters): Thematic worldbuilding essay
-- [De-Elfing the Fantasy World](https://www.telrhin.com/blog/de-elfing-the-fantasy-world): Design essay on subverting fantasy-race tropes (relevant to the Kaladri)
-- [World Bedtime Story](https://www.telrhin.com/blog/world-bedtime-story): Narrative/lore piece
-- [Field Guide to the Lowlands](https://www.telrhin.com/blog/field-guide-to-the-lowlands): Companion to the Field Guide to the Lowlands of Ebizhan
-- [Tavern Tales](https://www.telrhin.com/blog/tavern-tales): Campaign anecdotes
-- [City of Pearl](https://www.telrhin.com/blog/city-of-pearl): Location lore
-- [Rakshem](https://www.telrhin.com/blog/rakshem): Location/lore entry
-- [Indago](https://www.telrhin.com/blog/indago): Location/lore entry
-- [Midsummer](https://www.telrhin.com/blog/midsummer): In-world calendar/holiday content
-- [Telrhin Podcast](https://www.telrhin.com/blog/telrhin-podcast): Podcast episodes/notes about the setting
-- [Encyclopaedia Telrhinica](https://www.telrhin.com/blog/encyclopaedia-telrhinica): About the site's encyclopedia content
-- [Origins](https://www.telrhin.com/blog/origins): Early setting-creation history
-- [Re-designing an FRPG World](https://www.telrhin.com/blog/re-designing-an-frpg-world): Design/process essay
-- [Seven Years](https://www.telrhin.com/blog/seven-years): Campaign retrospective
-- [Back Alive](https://www.telrhin.com/blog/back-alive): Site/campaign status update
+- [Field Guide to the Lowlands](https://www.telrhin.com/blog/field-guide-to-the-lowlands): Intro to the Field Guide to the Lowlands of Ebizhan.
+- [Encyclopaedia Telrhinica](https://www.telrhin.com/blog/encyclopaedia-telrhinica): The Encyclopaedia Telrhinica — a 40-year database of campaign notes.
+- [Telrhin Podcast](https://www.telrhin.com/blog/telrhin-podcast): "Telrhin World Overview" podcast episode.
+- [The Telrhin Project Blog](https://www.telrhin.com/blog/the-telrhin-project-blog): About the Telrhin Project blog itself.
+- [The Adventure Log Lives](https://www.telrhin.com/blog/the-adventure-log-lives): Archive of the old Adventure Log zine (40 issues).
+- [Tempest Newzine](https://www.telrhin.com/blog/tempest-newzine): Archive of the Tempest newzine.
+- [Seven Years](https://www.telrhin.com/blog/seven-years): A retrospective on a campaign/site milestone.
+- [The Hackled Pint](https://www.telrhin.com/blog/the-hackled-pint): The Hackled Pint, a setting location/story.
+- [Back Alive](https://www.telrhin.com/blog/back-alive): Site/campaign status update.
+- [Things Here and There](https://www.telrhin.com/blog/things-here-and-there): Miscellaneous site updates and notes.
+- [Tavern Tales](https://www.telrhin.com/blog/tavern-tales): Tavern-based stories from the campaigns.
+- [May](https://www.telrhin.com/blog/may): Site/campaign update.
+- [Rope Bridge, Frying Pan](https://www.telrhin.com/blog/rope-bridge-frying-pan): A campaign mishap story.
+- [Nitro Billy Con](https://www.telrhin.com/blog/nitro-billy-con): Recap of a gaming convention/game day.
+- [Rahman Campaign Continues Afoot](https://www.telrhin.com/blog/rahman-campaign-continues-afoot): Update on the Rahman Campaign, an anti-hero storyline.
+- [Midsummer](https://www.telrhin.com/blog/midsummer): Midsummer campaign update.
+- [Re-designing an FRPG World](https://www.telrhin.com/blog/re-designing-an-frpg-world): Notes on redesigning the fantasy role-playing game world.
+
+## Game Systems & House Rules
+
+- [All the DMGs](https://www.telrhin.com/blog/all-the-dmgs): A look back across various D&D Dungeon Master's Guides.
+- [Arduin Crit Table](https://www.telrhin.com/blog/arduin-crit-table): The Arduin critical-hit table used in play.
+- [Fat Dragon](https://www.telrhin.com/blog/fat-dragon): The story-focused "Fat Dragon" house rules.
+- [Stabmaster](https://www.telrhin.com/blog/stabmaster-8): The OSR-inspired Stabmaster house-rule system.
+- [Dragonbane Options](https://www.telrhin.com/blog/dragonbane-options): Optional and homebrew rules layered onto Dragonbane for the Endorian Bay campaign.
 
 ## Optional
 
-- [Full blog index](https://www.telrhin.com/blog): Complete list of blog/session-log posts
-- [Sitemap](https://www.telrhin.com/sitemap.xml): Full machine-readable URL list for the site
-- Author on Bluesky: https://bsky.app/profile/studiozut.bsky.social
+- [Bluesky (@studiozut)](https://bsky.app/profile/studiozut.bsky.social): The author's Bluesky profile, where additional game content is posted.
