@@ -23,7 +23,7 @@ Both connection functions live in `telrhin_functions.module` and pull credential
 Some site content (e.g. campaign session summaries) is implemented as raw PHP in Drupal block bodies using the **PHP filter module** (`sites/.../modules/php/php.module`, evaluated via `php_eval()`), rather than as custom module code. Keep this in mind when debugging: errors will reference `php.module(80) : eval()'d code` rather than a real file/line in this repo.
 
 **Known constraints for this environment:**
-- The server's PHP version does **not** support PHP 7+ syntax: no `[]` short array literals (use `array(...)`), no `??` null-coalescing operator (use `isset($x) ? $x : $default`).
+- The site runs on **PHP 7.4.3** (Ubuntu `7.4.3-4ubuntu2.29+esm4`, Apache mod_php) on the EC2 host `ec2-54-202-56-186.us-west-2.compute.amazonaws.com` — confirmed via `php -v` and Drupal's `admin/reports/status` (Oct 2026). `[]` short arrays and `??` are supported; PHP 8-only syntax (`match`, nullsafe `?->`, named arguments, union types, etc.) is not. Older code here uses `array(...)` — match the surrounding style when editing.
 - `check_markup($text, 'filtered_html')` can silently return an empty string if `'filtered_html'` doesn't match an actual configured text format machine name on this site — this happened with the `Promo` field on `CampaignSummary` and was fixed by reverting to a raw `echo` (matching original, pre-refactor behavior). If you need filtered markup, verify the real format machine name in the site's `admin/config/content/formats` first.
 - These blocks are not tracked in this repo as source files — they live only in the Drupal DB (block config). When editing one, get the current body from the site admin UI first rather than assuming it matches anything here.
 
