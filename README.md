@@ -1,2 +1,2 @@
 # telrhin
-Codebase for Telrhin site https://telrhin.com
+Custom modules and dev for Telrhin site https://telrhin.com
