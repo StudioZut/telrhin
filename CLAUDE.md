@@ -14,7 +14,8 @@ Both connection functions live in `telrhin_functions.module` and pull credential
 ## Modules
 
 - `telrhin_functions` — shared DB connection helpers (`getdb()`, `getzutdb()`) and `myTruncate()` (multibyte-safe string truncation for DB text).
-- `telrhin_encyclopedia` — **UNFINISHED, not ready to deploy or enable** (disabled on the live site). `encyclopedia/entry/%` page callback, pulls from the external encyclopedia DB via `getzutdb()`. Before enabling: remove the leftover events template `node--telrhin_encyclopedia.tpl.php` from the live copy — the module's `theme_registry_alter()` would register it. The repo version of `telrhin_region_entries` links to `/encyclopedia/entry/{id}`, so don't deploy it until this module is finished and enabled (live still uses `/encyc/view?encycid={id}`).
+- `telrhin_encyclopedia` — **UNFINISHED, not ready to deploy or enable** (disabled on the live site). `encyclopedia/entry/%` page callback, pulls from the external encyclopedia DB via `getzutdb()`. This path does not exist on the live site — don't link to it. The working encyclopedia entry page is `/encyc/view?encycid={id}`, a Drupal page (URL alias for node 113), not part of any custom module.
+- `telrhin_region_entries` — region entry list blocks (external DB); entries link to `/encyc/view?encycid={id}`.
 - `telrhin_header_entry` — sidebar/header block showing a random encyclopedia entry (external DB), with admin-only edit links pointing to the legacy ColdFusion tool at `studiozut.com/admin/enc_edit.cfm`.
 - `telrhin_calendar` — in-world calendar/holiday blocks. Computes a fictional calendar date and season from the real date, and displays holiday text (editable via `admin/config/content/telrhin_calendar`, stored as Drupal variables via `variable_get`/`system_settings_form`).
 
