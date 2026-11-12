@@ -1,0 +1,81 @@
+<?php
+
+function telrhin_map_getentries() {
+
+        /* getzutdb() is defined in telrhin_functions module (dependency) */
+		$query = getzutdb();
+		
+		$sql = "SELECT Name, MapGrid, MapGrid_Sub, EntryID, Description_Public FROM Telrhin";
+		$result = mysqli_query($query, $sql);
+		$stuff = mysqli_fetch_assoc($result);
+
+		#foreach($row as $item) {
+		  #if ($item['Mapgrid'] != '') {
+    		  #  echo $item['Name'];
+		  #} 
+		#}
+
+		#do {
+		#echo $row['Name'] . ", "; 
+		#} while ($row);    
+
+		
+	# do {
+	# echo "<h3>$row['Name']</h3>"; 
+	# } while ($row);
+
+#$last = count($stuff) - 1;
+
+#foreach ($stuff as $i => $row)
+#{
+#    $isFirst = ($i == 0);
+#    $isLast = ($i == $last);
+#
+#    echo $row['Name'] . ", ";
+#}	
+
+
+	return $stuff;
+
+};
+
+function telrhin_map_spitout() {
+  $grab = telrhin_map_getentries();    
+  $entries = array();
+  foreach($grab as $entries) {
+    echo $stuff['Name'] . ", ";
+  }
+};
+
+
+/**
+* Create the Drupal blocks.
+*/
+
+ /**
+ * Implements hook_block_info().
+*/
+function telrhin_map_block_info() {
+   $blocks = array();
+   $blocks['telrhin_map'] = array(
+     'info' => t("Telrhin Map"),
+   );
+   return $blocks;
+}
+
+/**
+* Implements hook_block_view().
+*/
+
+function telrhin_map_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'telrhin_map':
+      $the_block = telrhin_map_spitout();
+      $block['title'] = t('Telrhin Map');
+      $block['content'] = $the_block;
+      break;
+    }
+  return $block;
+}
+

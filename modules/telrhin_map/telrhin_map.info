@@ -1,0 +1,6 @@
+name = Telrhin Map 
+description = (in progress) Generates a block for the interactive Lowlands map
+core = 7.x
+version = 7.x-0.1-alpha
+package = Zutworks
+dependencies[] = telrhin_functions
