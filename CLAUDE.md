@@ -17,6 +17,10 @@ Both connection functions live in `telrhin_functions.module` and pull credential
 - `telrhin_encyclopedia` — **UNFINISHED, not ready to deploy or enable** (disabled on the live site). `encyclopedia/entry/%` page callback, pulls from the external encyclopedia DB via `getzutdb()`. This path does not exist on the live site — don't link to it. The working encyclopedia entry page is `/encyc/view?encycid={id}`, a Drupal page (URL alias for node 113), not part of any custom module.
 - `telrhin_region_entries` — region entry list blocks (external DB); entries link to `/encyc/view?encycid={id}`.
 - `telrhin_map` — **work in progress, not functional** (disabled on the live site). Intended block for the interactive Lowlands map. As committed, `telrhin_map_spitout()` echoes an undefined `$stuff` and returns nothing, and `telrhin_map_getentries()` fetches only one row.
+
+## Theme
+
+`themes/telrhin` is the site's default theme, a sub-theme of the contrib **Drupal Bootstrap** base theme (`7.x-3.26`, installed manually at `web/sites/all/themes/bootstrap` on the live site, not in this repo or managed by Composer). Built from Bootstrap's CDN starterkit: Bootstrap 3.4.1 CSS/JS load from jsDelivr, so there's no build step. Customizations are `css/style.css`, `html.tpl.php`, `templates/system/page.tpl.php`, and three Views templates for the history page. The admin theme is Seven. On the live site the theme lives at `web/sites/all/themes/telrhin`.
 - `telrhin_header_entry` — sidebar/header block showing a random encyclopedia entry (external DB), with admin-only edit links pointing to the legacy ColdFusion tool at `studiozut.com/admin/enc_edit.cfm`.
 - `telrhin_calendar` — in-world calendar/holiday blocks. Computes a fictional calendar date and season from the real date, and displays holiday text (editable via `admin/config/content/telrhin_calendar`, stored as Drupal variables via `variable_get`/`system_settings_form`).
 

@@ -1,0 +1,103 @@
+/* changing padding of Higlight region in narrower views (there is a media query for min-width 768, but below that is was bumping the egdes */
+
+/* change header box background to white */
+#navbar {
+  background-color: #fff;
+}
+
+/* bump the main font size from 14px to 16px */
+body {
+  font-size: 16px;
+}
+
+/* add a little space between unstyled divs */
+div { margin-bottom: .5em; }
+
+.container .jumbotron, .container-fluid .jumbotron {
+  padding-right: 30px;
+  padding-left: 30px;
+}
+
+/* custom classes, mostly holdovers from the earlier themes */
+.captions1 { font-size: 11px; }
+
+/* cell padding for tables */
+td, th { padding: .5em; }
+
+/* spacing around blog taxonomy list */
+.field-type-taxonomy-term-reference {
+  margin-top: 1em;
+}
+
+/* hide taxonomy block under posts */
+.field-name-taxonomy-vocabulary-1.field-type-taxonomy-term-reference.field-label-above {
+  display: none;
+}
+
+/* style the 'latest blog post' featured on the home page */
+#block-views-latest-post-block .view-latest-post {
+  padding: 1em;
+  border: 1px solid #ccc;
+  border-radius: 1em;
+}
+
+#block-views-latest-post-block .views-field-title {
+  margin-top: 0;
+}
+
+/* adjust footer placement */
+footer { margin-top: 1em; }
+
+/* custom section header (folded corner flavor box) */
+.flavorbox {
+    background-color: #dff0d8;
+    /* background-color: #fce855; */
+    padding: 60px 30px;
+    margin-bottom: 1em;
+    min-height: 90px;
+    box-shadow: -5px 5px 7px rgba(0,0,0,0.3);
+    margin: 0 2em 0 .1em;
+}
+
+.flavorbox h3 {font-size:26px; margin-bottom: 5px; line-height: normal;}
+
+@media (max-width: 991px) {
+    .flavorbox h3 {
+      font-size:22px;
+    }
+}
+
+@media (max-width: 766px) {
+    .flavorbox {
+      margin: 0 .1em;
+    }
+}
+
+.foldtr {
+    position: relative;
+}
+
+.foldtr:before {
+    content: "";
+    position: absolute;
+    top: 0%;
+    right: 0%;
+    width: 0px;
+    height: 0px;
+    border-bottom: 70px solid #eee;
+    border-right: 70px solid transparent;
+    -webkit-box-shadow: -7px 7px 7px rgba(0,0,0,0.3);
+    -moz-box-shadow: -7px 7px 7px rgba(0,0,0,0.3);
+    box-shadow: -7px 7px 7px rgba(0,0,0,0.3);
+}
+
+.foldtr:after {
+    content: "";
+    position: absolute;
+    top: 0%;
+    right: 0%;
+    width: 0px;
+    height: 0px;
+    border-top: 69px solid #fff;
+    border-left: 69px solid transparent;
+}
