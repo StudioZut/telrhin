@@ -41,13 +41,13 @@ function telrhin_preprocess_node(&$variables) {
  * Implements hook_preprocess_html().
  *
  * Adds the site icons (files at the docroot: favicon.ico,
- * apple-touch-icon.png, icons/). The classic favicon link comes from the
+ * apple-touch-icon.png, favicons/). The classic favicon link comes from the
  * theme's "Shortcut icon" setting, which points at /favicon.ico.
  */
 function telrhin_preprocess_html(&$variables) {
   $icons = array(
-    array('rel' => 'icon', 'type' => 'image/png', 'sizes' => '32x32', 'href' => '/icons/favicon-32x32.png'),
-    array('rel' => 'icon', 'type' => 'image/png', 'sizes' => '192x192', 'href' => '/icons/icon-192.png'),
+    array('rel' => 'icon', 'type' => 'image/png', 'sizes' => '32x32', 'href' => '/favicons/favicon-32x32.png'),
+    array('rel' => 'icon', 'type' => 'image/png', 'sizes' => '192x192', 'href' => '/favicons/icon-192.png'),
     array('rel' => 'apple-touch-icon', 'sizes' => '180x180', 'href' => '/apple-touch-icon.png'),
   );
   foreach ($icons as $icon) {
