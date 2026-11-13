@@ -26,7 +26,7 @@ Both connection functions live in `telrhin_functions.module` and pull credential
 
 ## Site icons
 
-`favicon.ico` (16/32/48 px), `apple-touch-icon.png` (+ `apple-touch-icon-precomposed.png`, 180 px) and `icons/` (`favicon-32x32.png`, `icon-192.png`, `icon-512.png`) are deployed to the live docroot (`web/`). They're built from a square crop of the dragon head in `sites/default/files/telrhin-logo-2024.png` (1114×728) on the logo's cream background `#F6F3EA`, as 64-colour PNGs. `telrhin_preprocess_html()` adds the PNG/apple-touch links; the theme's "Shortcut icon" setting points at `favicon.ico`. These paths are in Composer's `preserve-paths` so core updates don't delete them, and Cloudflare has (or should have) a Skip rule for them so background icon fetchers aren't challenged.
+`favicon.ico` (16/32/48 px), `apple-touch-icon.png` (+ `apple-touch-icon-precomposed.png`, 180 px) and `favicons/` (`favicon-32x32.png`, `icon-192.png`, `icon-512.png`) are deployed to the live docroot (`web/`). They're built from a square crop of the dragon head in `sites/default/files/telrhin-logo-2024.png` (1114×728) on the logo's cream background `#F6F3EA`, as 64-colour PNGs. `telrhin_preprocess_html()` adds the PNG/apple-touch links; the theme's "Shortcut icon" setting points at `favicon.ico`. These paths are in Composer's `preserve-paths` so core updates don't delete them, and Cloudflare has (or should have) a Skip rule for them so background icon fetchers aren't challenged. Don't use `/icons/` for site files: Apache's default `alias.conf` maps it to `/usr/share/apache2/icons/`.
 
 ## Legacy static assets
 
