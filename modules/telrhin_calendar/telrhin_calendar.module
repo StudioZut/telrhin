@@ -26,44 +26,45 @@ function telrhin_calendar_menu() {
 /**
  * Holiday definitions: title, default dates and default text, by group.
  *
- * Dates are real-world month-day values (the Telrhin month has the same
- * number: 01 Melbid ... 12 Kellet). 'dates' is a comma-separated list of
- * single days ("03-01") and/or ranges ("08-08 to 08-14"). Both dates and
- * text can be overridden on the settings page (telrhin_calendar_KEY_dates,
- * telrhin_calendar_KEY_text variables); these are the fallbacks.
+ * 'dates' are Telrhin dates (see _telrhin_calendar_months()): a
+ * comma-separated list of days ("Parda 1"), ranges within a month
+ * ("Bendel 8-14") or across months ("Kellet 28 to Melbid 2"), and/or
+ * "Year's End". Both dates and text can be overridden on the settings page
+ * (telrhin_calendar_KEY_dates, telrhin_calendar_KEY_text variables); these
+ * are the fallbacks.
  */
 function _telrhin_calendar_get_holiday_defaults() {
   return array(
     'spring' => array(
-      'springtide' => array('title' => 'Springtide', 'dates' => '03-01', 'default' => "<h4>Happy Springtide! And a Good Septarmas to our Rayikan friends!</h4><p>Spring 1st (Parda 1st): Enter Springtide Text Here</p>"),
-      'firstfull'  => array('title' => 'First Full', 'dates' => '03-20', 'default' => "<h4>Happy Fulle'en and final day of Fullwik!</h4><p>Spring 21st (Parda 21st): Enter First Full Text Here</p>"),
-      'myrday'     => array('title' => 'Myr Day', 'dates' => '04-21', 'default' => "<h4>Happy Myr Day and Longmondi! Long Live the Baron!</h4><p>Spring 51st (Illom 21st): a celebration in the citystate of Lark-Han and surrounding villages in honor of their current prince, Baron Zodmius. Derisively nicknamed Zodmoot by his detractors. Parades and fireworks. This is timed to coincide with Long Moon Day ('longmondi'), when Tala is waxing full for the first time of the new year.</p>"),
-      'victory'    => array('title' => 'Victory Day', 'dates' => '05-31', 'default' => "<h4>Great Victory Day to our Damoran friends!</h4><p>Spring 91st (Sillas 31st): Pronounced victor-dee, a patriotic holiday in the Empire in celebration of the end of the Blackbanner wars and the founding of the kingdom in -1599n. Westron dissidents usually call it Straw Day (straw-dee), a banned term in the Empire.</p>"),
+      'springtide' => array('title' => 'Springtide', 'dates' => 'Parda 1', 'default' => "<h4>Happy Springtide! And a Good Septarmas to our Rayikan friends!</h4><p>Spring 1st (Parda 1st): Enter Springtide Text Here</p>"),
+      'firstfull'  => array('title' => 'First Full', 'dates' => 'Parda 21', 'default' => "<h4>Happy Fulle'en and final day of Fullwik!</h4><p>Spring 21st (Parda 21st): Enter First Full Text Here</p>"),
+      'myrday'     => array('title' => 'Myr Day', 'dates' => 'Illom 21', 'default' => "<h4>Happy Myr Day and Longmondi! Long Live the Baron!</h4><p>Spring 51st (Illom 21st): a celebration in the citystate of Lark-Han and surrounding villages in honor of their current prince, Baron Zodmius. Derisively nicknamed Zodmoot by his detractors. Parades and fireworks. This is timed to coincide with Long Moon Day ('longmondi'), when Tala is waxing full for the first time of the new year.</p>"),
+      'victory'    => array('title' => 'Victory Day', 'dates' => 'Sillas 31', 'default' => "<h4>Great Victory Day to our Damoran friends!</h4><p>Spring 91st (Sillas 31st): Pronounced victor-dee, a patriotic holiday in the Empire in celebration of the end of the Blackbanner wars and the founding of the kingdom in -1599n. Westron dissidents usually call it Straw Day (straw-dee), a banned term in the Empire.</p>"),
     ),
     'summer' => array(
-      'blacktide'     => array('title' => 'Blacktide / Second Full', 'dates' => '06-21', 'default' => "<h4>Merry Second Full and Happy Blacktide! And a fine Awakening Day to our Rayikan friends!</h4><p>Summer 21st (Ashlom 21st): A holy day for Talans and Lunans. Mostly a Westron holiday, it’s known as Blacktide among Southrons. Boxing, caber tossing and other feats, along with a good game of scrut. Also, Rayikans pray to Tempes on this day (the '4th Day of Awakening').</p>"),
-      'seneca'        => array('title' => 'Feast of Seneca', 'dates' => '06-24', 'default' => "<h4>Happy Feast of Seneca to our Rayikan friends!</h4><p>Summer 24th (Ashlom 24th): the '7th Day of Awakening' which is the 'Illumination' for Rayikans. Lots of singing and charity events at the temples.</p>"),
-      'tarn'          => array('title' => 'Tarn', 'dates' => '07-10', 'default' => "<h4>Merry Tarn! A toast to 'Good King Endrik'</h4><p>Summer 40th (Relt 10th): Zhanian day in honor of Endrik Stonebearer and March of 330n. A thanksgiving and a day of memorial to the war dead. 'To Good King Endrik!' goes the toast. In Rhask-Edaan they toast this day as Seliz Rhu-Haal Dan, the 'price of the great jewel': one of many necessary tragedies in the Boradun path towards the Great War that unmakes the World.</p>"),
-      'carnutes'      => array('title' => 'Carnutes', 'dates' => '08-06, 08-07', 'default' => "<h4>Carnutes</h4><p>Summer 66-67th (Bendel 6-7th): the key festival among the druidic cults, also celebrated by farming communities, Dremen and (oddly enough) Kerden. This is the summer solstice (Midsummer's Day). Usually celebrated in the woods with a bonfire, all night revelries and storytelling. Believed to be the time when the divide between the First and Second worlds is the weakest.</p>"),
-      'bokat'         => array('title' => 'Bokat', 'dates' => '08-08 to 08-14', 'default' => "<h4>Joyous Bokat!</h4><p>Summer 68th-74th (Bendel 8-14): A Meledian and Astavian week of feasts and festivals (and weddings!).</p>"),
-      'orhwik_summer' => array('title' => 'Summer Orhwik', 'dates' => '04-18 to 04-25', 'default' => "<h4>Good Orhwik to you!</h4><p>Summer 18th to 25th (Ashlom 18-25): The Summer Concordance. This is an event that occurs twice a year when Orh hangs full in the sky for seven days. On the last day there's a feast, and people wear comical hats that look like common objects like a beehive, a chamber pot, a lantern, an anvil.</p>"),
+      'blacktide'     => array('title' => 'Blacktide / Second Full', 'dates' => 'Ashlom 21', 'default' => "<h4>Merry Second Full and Happy Blacktide! And a fine Awakening Day to our Rayikan friends!</h4><p>Summer 21st (Ashlom 21st): A holy day for Talans and Lunans. Mostly a Westron holiday, it’s known as Blacktide among Southrons. Boxing, caber tossing and other feats, along with a good game of scrut. Also, Rayikans pray to Tempes on this day (the '4th Day of Awakening').</p>"),
+      'seneca'        => array('title' => 'Feast of Seneca', 'dates' => 'Ashlom 24', 'default' => "<h4>Happy Feast of Seneca to our Rayikan friends!</h4><p>Summer 24th (Ashlom 24th): the '7th Day of Awakening' which is the 'Illumination' for Rayikans. Lots of singing and charity events at the temples.</p>"),
+      'tarn'          => array('title' => 'Tarn', 'dates' => 'Relt 10', 'default' => "<h4>Merry Tarn! A toast to 'Good King Endrik'</h4><p>Summer 40th (Relt 10th): Zhanian day in honor of Endrik Stonebearer and March of 330n. A thanksgiving and a day of memorial to the war dead. 'To Good King Endrik!' goes the toast. In Rhask-Edaan they toast this day as Seliz Rhu-Haal Dan, the 'price of the great jewel': one of many necessary tragedies in the Boradun path towards the Great War that unmakes the World.</p>"),
+      'carnutes'      => array('title' => 'Carnutes', 'dates' => 'Bendel 6-7', 'default' => "<h4>Carnutes</h4><p>Summer 66-67th (Bendel 6-7th): the key festival among the druidic cults, also celebrated by farming communities, Dremen and (oddly enough) Kerden. This is the summer solstice (Midsummer's Day). Usually celebrated in the woods with a bonfire, all night revelries and storytelling. Believed to be the time when the divide between the First and Second worlds is the weakest.</p>"),
+      'bokat'         => array('title' => 'Bokat', 'dates' => 'Bendel 8-14', 'default' => "<h4>Joyous Bokat!</h4><p>Summer 68th-74th (Bendel 8-14): A Meledian and Astavian week of feasts and festivals (and weddings!).</p>"),
+      'orhwik_summer' => array('title' => 'Summer Orhwik', 'dates' => 'Ashlom 18-25', 'default' => "<h4>Good Orhwik to you!</h4><p>Summer 18th to 25th (Ashlom 18-25): The Summer Concordance. This is an event that occurs twice a year when Orh hangs full in the sky for seven days. On the last day there's a feast, and people wear comical hats that look like common objects like a beehive, a chamber pot, a lantern, an anvil.</p>"),
     ),
     'autumn' => array(
-      'sabbess'   => array('title' => 'Sabbess / Mehrgan', 'dates' => '07-30', 'default' => "<h4>Merry Sabbess! And Happy Mehrgan to our Boradun friends!</h4><p>Autumn 30th (Sepper 30th): A two day festival celebrating the harvest. Feasts, music, and a costume parade that often includes a procession with people in giant rat costumes getting 'marched out' of the village. The Boradun celebrate this as Mehrgan, when they open their cities to the Lowlanders hauling in their crops for sale.</p>"),
-      'thirdfull' => array('title' => 'Third Full', 'dates' => '09-21', 'default' => "<h4>A safe Third Full to everyone!</h4><p>Autumn 21st (Sepper 21st): The Third Full is considered a day of bad luck by Westrons and Abantu. Stores and shops are closed. Both moons appear over the Well in the night sky (the black void between the stars).</p>"),
-      'highhog'   => array('title' => 'High Hog Day', 'dates' => '11-30', 'default' => "<h4>Happy High Hog Day</h4><p>Autumn 91st (Sophor 31st): a rural celebration among Westrons in the Lowlands and Ausgourd, the dates vary and villages can have the High Hog Day Feast any time in late Autumn. There's a pig contest, a local Queen of the Hog (who mock-marries the award-winning pig), lots of dancing and drinking and pie eating.</p>"),
-      'cullwik'   => array('title' => 'Cullwik (Blood Week)', 'dates' => '11-05 to 11-11', 'default' => "<h4>Happy Cullwik! (Blood Week)</h4><p>Autumn 66th-72nd (Sophor 5th-11th): The fall culling of the herds, 'flesh week' for all the prized extra meat served at meals. A time of feasts and celebration, with animal sacrifices to the gods. Often celebrated with animal masks and necklaces full of papier-mache animal parts like livers, hearts, ears, and the occasional dong.</p>"),
+      'sabbess'   => array('title' => 'Sabbess / Mehrgan', 'dates' => 'Sepper 30', 'default' => "<h4>Merry Sabbess! And Happy Mehrgan to our Boradun friends!</h4><p>Autumn 30th (Sepper 30th): A two day festival celebrating the harvest. Feasts, music, and a costume parade that often includes a procession with people in giant rat costumes getting 'marched out' of the village. The Boradun celebrate this as Mehrgan, when they open their cities to the Lowlanders hauling in their crops for sale.</p>"),
+      'thirdfull' => array('title' => 'Third Full', 'dates' => 'Sepper 21', 'default' => "<h4>A safe Third Full to everyone!</h4><p>Autumn 21st (Sepper 21st): The Third Full is considered a day of bad luck by Westrons and Abantu. Stores and shops are closed. Both moons appear over the Well in the night sky (the black void between the stars).</p>"),
+      'highhog'   => array('title' => 'High Hog Day', 'dates' => 'Sophor 31', 'default' => "<h4>Happy High Hog Day</h4><p>Autumn 91st (Sophor 31st): a rural celebration among Westrons in the Lowlands and Ausgourd, the dates vary and villages can have the High Hog Day Feast any time in late Autumn. There's a pig contest, a local Queen of the Hog (who mock-marries the award-winning pig), lots of dancing and drinking and pie eating.</p>"),
+      'cullwik'   => array('title' => 'Cullwik (Blood Week)', 'dates' => 'Sophor 5-11', 'default' => "<h4>Happy Cullwik! (Blood Week)</h4><p>Autumn 66th-72nd (Sophor 5th-11th): The fall culling of the herds, 'flesh week' for all the prized extra meat served at meals. A time of feasts and celebration, with animal sacrifices to the gods. Often celebrated with animal masks and necklaces full of papier-mache animal parts like livers, hearts, ears, and the occasional dong.</p>"),
     ),
     'winter' => array(
-      'kingtide'      => array('title' => 'Kingtide', 'dates' => '12-03', 'default' => "<h4>Merry Kingtide to our Ausgourdian friends!</h4><p>Winter 3rd (Kellet 3rd): honors the 'Great Victory of King Ausgourd' over the western River Clans. This was the battle that founded Ausgourd in 920n.</p>"),
-      'warsend'       => array('title' => 'Warsend Day', 'dates' => '12-21', 'default' => "<h4>A fine Warsend Day to you, and a Blessed Quartering Day to those who celebrate it</h4><p>Winter 21st (Kellet 21st): a day of fasting, in honor of those who died in the Great War. The Rayikan Church uses this day to honor the Quartering ('Blessed Quartering Day!'), which also requires fasting.</p>"),
-      'midwinter'     => array('title' => 'Midwinter\'s Day', 'dates' => '02-06', 'default' => "<h4>Happy Midwinter's Day!</h4><p>Winter 66th (Romstil 6th): a day of “dark magic when spirits roam the land”, celebrated by the Secret Circle, Varas, Seht, and others. Locals are suspicious of people who look tired and hungover the next day. Rayikians treat it as a day of mourning and close their shops.</p>"),
-      'gracemas'      => array('title' => 'Gracemas', 'dates' => '02-21', 'default' => "<h4>A Happy Gracemas to our Rayikian friends!</h4><p>Winter 81st (Romstil 21st): Rayikian holiday originally a celebration in honor of Savana for the strength to make it through the winter, it’s now more or less a celebration to Tempes and Argos as well (thanks to a convoluted passage in the Rayika).</p>"),
-      'iron'          => array('title' => 'Day of Iron', 'dates' => '03-02, 03-03', 'default' => "<h4>A Merry Day of Iron to our Boradun friends!</h4><p>Winter 91st (Romstil 31st): a Boradun holiday in honor of Galek's banishment from Hirtor Harad. Usually celebrated in the Lowlands as a market day or fair. Also celebrated in Khitagan as Boradun Day. For the Boradun (outside of Rooksholm) it's often a week-long party of irreverence celebrating Galek 'sticking it to the gods' with bawdy songs and men wearing costume comedy breasts.</p>"),
-      'orhwik_winter' => array('title' => 'Winter Orhwik', 'dates' => '10-18 to 10-25', 'default' => "<h4>Good Orhwik to you!</h4><p>Winter 18th to 25th (Kellet 18-25): The Winter Concordance. This is an event that occurs twice a year when Orh hangs full in the sky for seven days. On the last day there's a feast, and people wear comical hats made of pine cones and twigs.</p>"),
+      'kingtide'      => array('title' => 'Kingtide', 'dates' => 'Kellet 3', 'default' => "<h4>Merry Kingtide to our Ausgourdian friends!</h4><p>Winter 3rd (Kellet 3rd): honors the 'Great Victory of King Ausgourd' over the western River Clans. This was the battle that founded Ausgourd in 920n.</p>"),
+      'warsend'       => array('title' => 'Warsend Day', 'dates' => 'Kellet 21', 'default' => "<h4>A fine Warsend Day to you, and a Blessed Quartering Day to those who celebrate it</h4><p>Winter 21st (Kellet 21st): a day of fasting, in honor of those who died in the Great War. The Rayikan Church uses this day to honor the Quartering ('Blessed Quartering Day!'), which also requires fasting.</p>"),
+      'midwinter'     => array('title' => 'Midwinter\'s Day', 'dates' => 'Romstil 6', 'default' => "<h4>Happy Midwinter's Day!</h4><p>Winter 66th (Romstil 6th): a day of “dark magic when spirits roam the land”, celebrated by the Secret Circle, Varas, Seht, and others. Locals are suspicious of people who look tired and hungover the next day. Rayikians treat it as a day of mourning and close their shops.</p>"),
+      'gracemas'      => array('title' => 'Gracemas', 'dates' => 'Romstil 21', 'default' => "<h4>A Happy Gracemas to our Rayikian friends!</h4><p>Winter 81st (Romstil 21st): Rayikian holiday originally a celebration in honor of Savana for the strength to make it through the winter, it’s now more or less a celebration to Tempes and Argos as well (thanks to a convoluted passage in the Rayika).</p>"),
+      'iron'          => array('title' => 'Day of Iron', 'dates' => 'Romstil 30', 'default' => "<h4>A Merry Day of Iron to our Boradun friends!</h4><p>Winter 91st (Romstil 31st): a Boradun holiday in honor of Galek's banishment from Hirtor Harad. Usually celebrated in the Lowlands as a market day or fair. Also celebrated in Khitagan as Boradun Day. For the Boradun (outside of Rooksholm) it's often a week-long party of irreverence celebrating Galek 'sticking it to the gods' with bawdy songs and men wearing costume comedy breasts.</p>"),
+      'orhwik_winter' => array('title' => 'Winter Orhwik', 'dates' => 'Kellet 18-25', 'default' => "<h4>Good Orhwik to you!</h4><p>Winter 18th to 25th (Kellet 18-25): The Winter Concordance. This is an event that occurs twice a year when Orh hangs full in the sky for seven days. On the last day there's a feast, and people wear comical hats made of pine cones and twigs.</p>"),
     ),
     'recurring' => array(
-      'carndur' => array('title' => 'Carn Dur (Thiefbane)', 'dates' => '02-18, 05-18, 08-18, 11-18', 'default' => "<h4>A Good Carn Dur to everyone!</h4><p>Carn Dur (also called Thiefbane), celebrated every 78th (18th of Sillas, Bendel, Sophor and Romstil): Westron day of thanksgiving and community feasts honoring families and tradition (focus on obedience and honesty).</p>"),
+      'carndur' => array('title' => 'Carn Dur (Thiefbane)', 'dates' => 'Sillas 18, Bendel 18, Sophor 18, Romstil 18', 'default' => "<h4>A Good Carn Dur to everyone!</h4><p>Carn Dur (also called Thiefbane), celebrated every 78th (18th of Sillas, Bendel, Sophor and Romstil): Westron day of thanksgiving and community feasts honoring families and tradition (focus on obedience and honesty).</p>"),
     ),
   );
 }
@@ -93,7 +94,7 @@ function telrhin_calendar_settings_form($form, &$form_state) {
         '#type' => 'textfield',
         '#title' => t('@holiday: dates', array('@holiday' => $data['title'])),
         '#default_value' => variable_get('telrhin_calendar_' . $machine_name . '_dates', $data['dates']),
-        '#description' => t('Month-day, e.g. 03-01. Separate several dates with commas; give a range as 08-08 to 08-14. Months: 01 Melbid, 02 Romstil, 03 Parda, 04 Illom, 05 Sillas, 06 Ashlom, 07 Relt, 08 Bendel, 09 Sepper, 10 Bas, 11 Sophor, 12 Kellet.'),
+        '#description' => t('Telrhin date, e.g. Parda 1. Separate several dates with commas; give a range as Bendel 8-14 or Kellet 28 to Melbid 2. Use "Year\'s End" for the day(s) after Romstil 31. Months (days): @months.', array('@months' => _telrhin_calendar_month_list())),
         '#size' => 40,
         '#required' => TRUE,
       );
@@ -122,25 +123,25 @@ function telrhin_calendar_settings_form_validate($form, &$form_state) {
     $field = 'telrhin_calendar_' . $key . '_dates';
     $ranges = _telrhin_calendar_parse_dates($form_state['values'][$field]);
     if ($ranges === FALSE) {
-      form_set_error($field, t('%holiday: use month-day dates like 03-01, separated by commas, and ranges like 08-08 to 08-14.', array('%holiday' => $data['title'])));
+      form_set_error($field, t('%holiday: use Telrhin dates like Parda 1, separated by commas, ranges like Bendel 8-14 or Kellet 28 to Melbid 2, or Year\'s End. Check the day exists in that month.', array('%holiday' => $data['title'])));
       continue;
     }
-    // Store a tidy version ("08-06, 08-07, 08-08 to 08-14").
+    // Store a tidy version ("Bendel 6-7, Bendel 18").
     form_set_value($form[$data['group']][$field], _telrhin_calendar_format_dates($ranges), $form_state);
-    foreach (_telrhin_calendar_expand_ranges($ranges) as $md) {
-      $days[$md][] = $data['title'];
+    foreach (_telrhin_calendar_expand_ranges($ranges) as $n) {
+      $days[$n][] = $data['title'];
     }
   }
   // Overlaps are allowed (single dates win over ranges), but point them out.
   $overlaps = array();
   ksort($days);
-  foreach ($days as $md => $titles) {
+  foreach ($days as $n => $titles) {
     if (count($titles) > 1) {
-      $overlaps[] = $md . ' (' . implode(', ', $titles) . ')';
+      $overlaps[] = _telrhin_calendar_day_label($n) . ' (' . implode(', ', $titles) . ')';
     }
   }
   if ($overlaps && !form_get_errors()) {
-    drupal_set_message(t('These days have more than one holiday: @list. Only one is shown: a single-date holiday wins over a date range, otherwise the one listed first.', array('@list' => implode('; ', $overlaps))), 'warning');
+    drupal_set_message(t('These days have more than one holiday: @list. Only one is shown: a single-day date wins over a range, otherwise the one listed first.', array('@list' => implode('; ', $overlaps))), 'warning');
   }
 }
 
@@ -166,28 +167,114 @@ function _telrhin_calendar_flat_holidays() {
 }
 
 /**
- * Parses a dates string into ranges.
+ * The Telrhin (Dacarthite) months in order, with their lengths.
  *
- * @param string $value
- *   E.g. "02-18, 05-18" or "08-08 to 08-14".
+ * Each season is 30 + 30 + 31 = 91 days; the year is exactly 364 days with
+ * no leap years. Parda 1 (Spring 1, New Year) is real-world March 1.
+ */
+function _telrhin_calendar_months() {
+  return array(
+    'Parda' => 30, 'Illom' => 30, 'Sillas' => 31,
+    'Ashlom' => 30, 'Relt' => 30, 'Bendel' => 31,
+    'Sepper' => 30, 'Bas' => 30, 'Sophor' => 31,
+    'Kellet' => 30, 'Melbid' => 30, 'Romstil' => 31,
+  );
+}
+
+/**
+ * Month names with lengths, for help text ("Parda 30, Illom 30, ...").
+ */
+function _telrhin_calendar_month_list() {
+  $parts = array();
+  foreach (_telrhin_calendar_months() as $name => $length) {
+    $parts[] = $name . ' ' . $length;
+  }
+  return implode(', ', $parts);
+}
+
+/**
+ * Converts a Telrhin month and day to the day of the year (1-364).
+ *
+ * @return int|false
+ *   The day number, or FALSE if the month or day is invalid.
+ */
+function _telrhin_calendar_day_number($month, $day) {
+  $n = 0;
+  foreach (_telrhin_calendar_months() as $name => $length) {
+    if (strcasecmp($name, $month) === 0) {
+      return ($day >= 1 && $day <= $length) ? $n + $day : FALSE;
+    }
+    $n += $length;
+  }
+  return FALSE;
+}
+
+/**
+ * Splits a day of the year (1-364) into month and day.
+ *
+ * @return array
+ *   array(month name, day of month).
+ */
+function _telrhin_calendar_month_day($n) {
+  foreach (_telrhin_calendar_months() as $name => $length) {
+    if ($n <= $length) {
+      return array($name, $n);
+    }
+    $n -= $length;
+  }
+  return array('', 0);
+}
+
+/**
+ * Label for a day of the year: "Bendel 8", or "Year's End" for 0.
+ */
+function _telrhin_calendar_day_label($n) {
+  if ($n == 0) {
+    return "Year's End";
+  }
+  list($month, $day) = _telrhin_calendar_month_day($n);
+  return $month . ' ' . $day;
+}
+
+/**
+ * Parses a dates string into ranges of day numbers.
+ *
+ * Accepts, comma-separated: "Parda 1", "Bendel 8-14", "Kellet 28 to
+ * Melbid 2" (may wrap past Romstil 31) and "Year's End".
  *
  * @return array|false
- *   List of array(start, end) month-day pairs (start == end for a single
- *   day), or FALSE if anything doesn't parse.
+ *   List of array(start, end) day numbers (1-364; 0 = Year's End; start ==
+ *   end for a single day), or FALSE if anything doesn't parse.
  */
 function _telrhin_calendar_parse_dates($value) {
   $ranges = array();
   foreach (preg_split('/\s*,\s*/', trim($value), -1, PREG_SPLIT_NO_EMPTY) as $part) {
-    if (!preg_match('/^(\d{1,2})-(\d{1,2})(?:\s+to\s+(\d{1,2})-(\d{1,2}))?$/i', $part, $m)) {
-      return FALSE;
+    if (preg_match("/^year'?s\s+end$/i", $part)) {
+      $ranges[] = array(0, 0);
+      continue;
     }
-    $start = array((int) $m[1], (int) $m[2]);
-    $end = isset($m[3]) ? array((int) $m[3], (int) $m[4]) : $start;
-    // 2024 is a leap year, so 02-29 is accepted.
-    if (!checkdate($start[0], $start[1], 2024) || !checkdate($end[0], $end[1], 2024)) {
-      return FALSE;
+    if (preg_match('/^([a-z]+)\s+(\d{1,2})(?:\s*-\s*(\d{1,2})|\s+to\s+([a-z]+)\s+(\d{1,2}))?$/i', $part, $m)) {
+      $start = _telrhin_calendar_day_number($m[1], (int) $m[2]);
+      if (!empty($m[3])) {
+        $end = _telrhin_calendar_day_number($m[1], (int) $m[3]);
+        // "Bendel 14-8" is not a range.
+        if ($end !== FALSE && $end < $start) {
+          return FALSE;
+        }
+      }
+      elseif (!empty($m[4])) {
+        $end = _telrhin_calendar_day_number($m[4], (int) $m[5]);
+      }
+      else {
+        $end = $start;
+      }
+      if ($start === FALSE || $end === FALSE) {
+        return FALSE;
+      }
+      $ranges[] = array($start, $end);
+      continue;
     }
-    $ranges[] = array(sprintf('%02d-%02d', $start[0], $start[1]), sprintf('%02d-%02d', $end[0], $end[1]));
+    return FALSE;
   }
   return $ranges ? $ranges : FALSE;
 }
@@ -198,37 +285,49 @@ function _telrhin_calendar_parse_dates($value) {
 function _telrhin_calendar_format_dates(array $ranges) {
   $parts = array();
   foreach ($ranges as $range) {
-    $parts[] = ($range[0] === $range[1]) ? $range[0] : $range[0] . ' to ' . $range[1];
+    list($start, $end) = $range;
+    if ($start === $end) {
+      $parts[] = _telrhin_calendar_day_label($start);
+      continue;
+    }
+    list($m1, $d1) = _telrhin_calendar_month_day($start);
+    list($m2, $d2) = _telrhin_calendar_month_day($end);
+    $parts[] = ($m1 === $m2 && $start < $end) ? "$m1 $d1-$d2" : "$m1 $d1 to $m2 $d2";
   }
   return implode(', ', $parts);
 }
 
 /**
- * Lists every month-day covered by the ranges (a range may wrap the year).
+ * Lists every day number covered by the ranges (a range may wrap the year).
  */
 function _telrhin_calendar_expand_ranges(array $ranges) {
   $days = array();
   foreach ($ranges as $range) {
-    $day = new DateTime('2024-' . $range[0]);
-    $end = new DateTime(($range[1] < $range[0] ? '2025-' : '2024-') . $range[1]);
-    while ($day <= $end) {
-      $days[] = $day->format('m-d');
-      $day->modify('+1 day');
+    list($start, $end) = $range;
+    if ($start === 0) {
+      $days[] = 0;
+      continue;
+    }
+    for ($n = $start; ; $n = ($n % 364) + 1) {
+      $days[] = $n;
+      if ($n === $end) {
+        break;
+      }
     }
   }
   return $days;
 }
 
 /**
- * Returns the holiday text for a month-day, or '' if none.
+ * Returns the holiday text for a Telrhin day number, or '' if none.
  *
  * Single-day dates win over ranges; within each, the first holiday in the
  * definition order wins.
  *
- * @param string $md
- *   Month-day, e.g. "08-06".
+ * @param int $n
+ *   Day of the Telrhin year (1-364), or 0 for Year's End.
  */
-function _telrhin_calendar_holiday_for_date($md) {
+function _telrhin_calendar_holiday_for_day($n) {
   $holidays = _telrhin_calendar_flat_holidays();
   $single = $range = NULL;
   foreach ($holidays as $key => $data) {
@@ -237,8 +336,7 @@ function _telrhin_calendar_holiday_for_date($md) {
       continue;
     }
     foreach ($ranges as $r) {
-      $match = ($r[0] <= $r[1]) ? ($md >= $r[0] && $md <= $r[1]) : ($md >= $r[0] || $md <= $r[1]);
-      if (!$match) {
+      if (!in_array($n, _telrhin_calendar_expand_ranges(array($r)), TRUE)) {
         continue;
       }
       if ($r[0] === $r[1]) {
@@ -256,6 +354,46 @@ function _telrhin_calendar_holiday_for_date($md) {
     return '';
   }
   return variable_get('telrhin_calendar_' . $key . '_text', $holidays[$key]['default']);
+}
+
+/**
+ * Converts a real-world date to the Telrhin date.
+ *
+ * Parda 1 is March 1 every year and the Telrhin year is 364 days, so Romstil
+ * 31 is February 27; February 28 (and February 29 in leap years) is
+ * "Year's End", outside any month or season.
+ *
+ * @param string $ymd
+ *   Real date as Y-m-d; defaults to today.
+ *
+ * @return array
+ *   'day' (1-364, 0 for Year's End), 'season', 'season_day', 'month',
+ *   'month_day', and 'label' (e.g. "Autumn 75 (Sophor 15)").
+ */
+function _telrhin_calendar_date($ymd = NULL) {
+  $today = new DateTime($ymd === NULL ? date('Y-m-d') : $ymd);
+  $year = (int) $today->format('Y');
+  if ((int) $today->format('n') < 3) {
+    $year--;
+  }
+  $start = new DateTime($year . '-03-01');
+  $n = $start->diff($today)->days + 1;
+
+  if ($n > 364) {
+    return array('day' => 0, 'season' => '', 'season_day' => 0, 'month' => '', 'month_day' => 0, 'label' => "Year's End");
+  }
+  $seasons = array('Spring', 'Summer', 'Autumn', 'Winter');
+  $season = $seasons[(int) floor(($n - 1) / 91)];
+  $season_day = (($n - 1) % 91) + 1;
+  list($month, $month_day) = _telrhin_calendar_month_day($n);
+  return array(
+    'day' => $n,
+    'season' => $season,
+    'season_day' => $season_day,
+    'month' => $month,
+    'month_day' => $month_day,
+    'label' => "$season $season_day ($month $month_day)",
+  );
 }
 
 /**
@@ -323,31 +461,13 @@ function _telrhin_calendar_get_data() {
   $telcal2 = isset($day_map[$current_day][1]) ? $day_map[$current_day][1] : '';
   $weekday_string = "Today is " . $telcal . " in the Lowlands. In the Empire they call it <em>" . $telcal2 . "</em> (Rayikian calendar).";
 
-  // --- 2. SET DESTINITE DATE ---
-  $month_map = array(
-    1 => "Melbid", 2 => "Romstil", 3 => "Parda", 4 => "Illom", 
-    5 => "Sillas", 6 => "Ashlom", 7 => "Relt", 8 => "Bendel", 
-    9 => "Sepper", 10 => "Bas", 11 => "Sophor", 12 => "Kellet"
-  );
-  $destinitemonth = $month_map[date("n")];
-  $destiniteday = date("j");
-
-  $dayofyear = (date("z") - 59); // date("z") gets day of year 0-365
-  if ($dayofyear < 1) {
-    $dayofyear = 364 + $dayofyear;
-  }
-
-  $season_num = ceil($dayofyear / 91);
-  $dayofseason = $dayofyear - (($season_num - 1) * 91);
-  
-  $season_names = array(1 => 'Spring', 2 => 'Summer', 3 => 'Autumn', 4 => 'Winter');
-  $season_name = isset($season_names[$season_num]) ? $season_names[$season_num] : 'Spring';
-  $seasonString = $season_name . " " . $dayofseason;
-  $date_string = $seasonString . " (" . $destinitemonth . " " . $destiniteday . ")";
+  // --- 2. SET TELRHIN DATE (Parda 1 = March 1; see _telrhin_calendar_date()) ---
+  $telrhin_date = _telrhin_calendar_date();
+  $date_string = $telrhin_date['label'];
 
   // --- 3. SET HOLIDAY STRING ---
   // Dates and text come from the settings page (or the defaults).
-  $holString = _telrhin_calendar_holiday_for_date(date('m-d'));
+  $holString = _telrhin_calendar_holiday_for_day($telrhin_date['day']);
 
   // --- 4. SET AUTH USER LINK ---
   global $user;
