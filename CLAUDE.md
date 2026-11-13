@@ -20,6 +20,10 @@ Both connection functions live in `telrhin_functions.module` and pull credential
 - `telrhin_header_entry` — header block (`highlighted` region) showing a random encyclopedia entry (external DB), with admin-only view/edit links; the edit link points to the legacy ColdFusion tool at `studiozut.com/admin/enc_edit.cfm`. Converts Windows-1252 values to UTF-8 and strips HTML from the description before truncating (see encoding note below).
 - `telrhin_calendar` — in-world calendar/holiday blocks. Computes a fictional calendar date and season from the real date, and displays holiday text (editable via `admin/config/content/telrhin_calendar`, stored as Drupal variables via `variable_get`/`system_settings_form`).
 
+## Standalone pages
+
+- `maps/lowlands.php` — interactive Lowlands map at `https://telrhin.com/maps/lowlands.php`, deployed to `web/maps/` on the live site (outside Drupal's page system; `web/maps` is in Composer's `preserve-paths`). Bootstraps Drupal only to use `getzutdb()` and the output filters; never hard-code DB credentials here. Markers for encyclopedia entries of type 6 (settlement) and 8 (geographic) that have `MapGrid`/`MapGrid_Sub`; the map image is `web/downloads/lowlands_map.jpg` (not in repo).
+
 ## Theme
 
 `themes/telrhin` is the site's default theme, a sub-theme of the contrib **Drupal Bootstrap** base theme (`7.x-3.27`). On the live site Bootstrap is managed by Composer (`"drupal/bootstrap": "3.27.0"`, pinned) and installed at `web/sites/all/themes/contrib/bootstrap`; it is not in this repo. Built from Bootstrap's CDN starterkit: Bootstrap 3.4.1 CSS/JS load from jsDelivr, so there's no build step. The admin theme is Seven. On the live site the theme lives at `web/sites/all/themes/telrhin`.
