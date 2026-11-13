@@ -29,6 +29,16 @@ td, th { padding: .5em; }
   margin-top: 1em;
 }
 
+/* blog post tags as buttons (classes added in template.php); keep them on one line */
+.field-name-field-tags .field-item {
+  display: inline-block;
+  margin-bottom: 0;
+}
+.field-name-field-tags .field-item a.btn {
+  margin-right: .5em;
+  margin-bottom: .5em;
+}
+
 /* hide taxonomy block under posts */
 .field-name-taxonomy-vocabulary-1.field-type-taxonomy-term-reference.field-label-above {
   display: none;
