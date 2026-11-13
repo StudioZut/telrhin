@@ -1,6 +1,6 @@
 name = Telrhin Calendar
 description = Provides blocks showing the current in-world Telrhin date, season and holiday. Holiday dates and text are editable on the settings page.
-version = 7.x-1.3
+version = 7.x-1.4
 core = 7.x
 package = Zutworks
 configure = admin/config/content/telrhin_calendar

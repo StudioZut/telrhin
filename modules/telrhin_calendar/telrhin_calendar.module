@@ -70,68 +70,245 @@ function _telrhin_calendar_get_holiday_defaults() {
 }
 
 /**
- * Form builder for the Telrhin Calendar settings page.
- * Uses Vertical Tabs to organize the massive list of text areas cleanly.
+ * Returns the current holidays, keyed by machine name.
+ *
+ * Holidays are stored in the 'telrhin_calendar_holidays' variable once the
+ * settings page has been saved. Until then they come from
+ * _telrhin_calendar_get_holiday_defaults() (with any per-holiday
+ * telrhin_calendar_KEY_dates / _text overrides from the earlier version).
+ *
+ * @return array
+ *   Key => array('title' => string, 'dates' => string, 'text' => string),
+ *   ordered by the first date of each holiday.
+ */
+function _telrhin_calendar_get_holidays() {
+  $holidays = variable_get('telrhin_calendar_holidays', NULL);
+  if ($holidays === NULL) {
+    $holidays = array();
+    foreach (_telrhin_calendar_get_holiday_defaults() as $group) {
+      foreach ($group as $key => $data) {
+        $holidays[$key] = array(
+          'title' => $data['title'],
+          'dates' => variable_get('telrhin_calendar_' . $key . '_dates', $data['dates']),
+          'text' => variable_get('telrhin_calendar_' . $key . '_text', $data['default']),
+        );
+      }
+    }
+  }
+  uasort($holidays, '_telrhin_calendar_compare_holidays');
+  return $holidays;
+}
+
+/**
+ * Sort callback: by first date, then by name.
+ */
+function _telrhin_calendar_compare_holidays($a, $b) {
+  $first_a = _telrhin_calendar_first_day($a['dates']);
+  $first_b = _telrhin_calendar_first_day($b['dates']);
+  if ($first_a !== $first_b) {
+    return $first_a - $first_b;
+  }
+  return strcasecmp($a['title'], $b['title']);
+}
+
+/**
+ * First day number of a dates string (Year's End sorts last; invalid first).
+ */
+function _telrhin_calendar_first_day($dates) {
+  $ranges = _telrhin_calendar_parse_dates($dates);
+  if (!$ranges) {
+    return -1;
+  }
+  $first = $ranges[0][0];
+  return $first === 0 ? 365 : $first;
+}
+
+/**
+ * Settings-page tab for a holiday, worked out from its dates.
+ *
+ * @return string
+ *   'spring', 'summer', 'autumn' or 'winter' when every day falls in one
+ *   season (Year's End counts as winter), otherwise 'recurring'.
+ */
+function _telrhin_calendar_holiday_group($dates) {
+  $ranges = _telrhin_calendar_parse_dates($dates);
+  if (!$ranges) {
+    return 'recurring';
+  }
+  $seasons = array();
+  foreach (_telrhin_calendar_expand_ranges($ranges) as $n) {
+    $seasons[$n === 0 ? 3 : (int) floor(($n - 1) / 91)] = TRUE;
+  }
+  $names = array('spring', 'summer', 'autumn', 'winter');
+  return count($seasons) === 1 ? $names[key($seasons)] : 'recurring';
+}
+
+/**
+ * Form builder for the Telrhin calendar settings page.
+ *
+ * Holidays are grouped in vertical tabs by season; each holiday is a
+ * collapsed section with its name, dates, text and a delete checkbox. A
+ * separate section adds a new holiday.
  */
 function telrhin_calendar_settings_form($form, &$form_state) {
-  $form['holiday_tabs'] = array(
-    '#type' => 'vertical_tabs',
+  $form['intro'] = array(
+    '#markup' => '<p>' . t('Holiday dates are Telrhin dates. Each holiday appears in the tab for its season; holidays spanning several seasons are under Recurring.') . '</p>',
   );
 
-  $groups = _telrhin_calendar_get_holiday_defaults();
-  
-  foreach ($groups as $group_key => $holidays) {
-    // Create a tab for each season/group
-    $form[$group_key] = array(
+  $form['holiday_tabs'] = array('#type' => 'vertical_tabs');
+  $tabs = array(
+    'spring' => t('Spring holidays'),
+    'summer' => t('Summer holidays'),
+    'autumn' => t('Autumn holidays'),
+    'winter' => t('Winter holidays'),
+    'recurring' => t('Recurring holidays'),
+  );
+  foreach ($tabs as $group => $title) {
+    $form[$group] = array(
       '#type' => 'fieldset',
-      '#title' => ucfirst($group_key) . ' Holidays',
+      '#title' => $title,
       '#group' => 'holiday_tabs',
     );
+  }
 
-    // Populate each tab with a dates field and a text area per holiday.
-    foreach ($holidays as $machine_name => $data) {
-      $form[$group_key]['telrhin_calendar_' . $machine_name . '_dates'] = array(
-        '#type' => 'textfield',
-        '#title' => t('@holiday: dates', array('@holiday' => $data['title'])),
-        '#default_value' => variable_get('telrhin_calendar_' . $machine_name . '_dates', $data['dates']),
-        '#description' => t('Telrhin date, e.g. Parda 1. Separate several dates with commas; give a range as Bendel 8-14 or Kellet 28 to Melbid 2. Use "Year\'s End" for the day(s) after Romstil 31. Months (days): @months.', array('@months' => _telrhin_calendar_month_list())),
-        '#size' => 40,
-        '#required' => TRUE,
-      );
-      $form[$group_key]['telrhin_calendar_' . $machine_name . '_text'] = array(
-        '#type' => 'textarea',
-        '#title' => t('@holiday: text', array('@holiday' => $data['title'])),
-        '#default_value' => variable_get('telrhin_calendar_' . $machine_name . '_text', $data['default']),
-        '#description' => t('Text to display during this holiday. HTML tags like &lt;h4&gt; and &lt;p&gt; are allowed.'),
-      );
+  $form['holidays'] = array('#tree' => TRUE);
+  $count = array_fill_keys(array_keys($tabs), 0);
+  foreach (_telrhin_calendar_get_holidays() as $key => $holiday) {
+    $group = _telrhin_calendar_holiday_group($holiday['dates']);
+    $count[$group]++;
+    $form['holidays'][$key] = array(
+      '#type' => 'fieldset',
+      '#title' => check_plain($holiday['title']) . ' — ' . check_plain($holiday['dates']),
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#group' => $group,
+    );
+    $form['holidays'][$key] += _telrhin_calendar_holiday_fields($holiday);
+    $form['holidays'][$key]['delete'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Delete this holiday'),
+      '#weight' => 10,
+    );
+  }
+  foreach ($count as $group => $n) {
+    if (!$n) {
+      $form[$group]['empty'] = array('#markup' => '<p>' . t('No holidays.') . '</p>');
     }
   }
 
-  $form = system_settings_form($form);
-  $form['#validate'][] = 'telrhin_calendar_settings_form_validate';
-  $form['#submit'][] = 'telrhin_calendar_settings_form_after_submit';
+  $form['new'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Add a holiday'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#tree' => TRUE,
+  );
+  $form['new'] += _telrhin_calendar_holiday_fields(array('title' => '', 'dates' => '', 'text' => ''), FALSE);
+  $form['new']['key'] = array(
+    '#type' => 'machine_name',
+    '#title' => t('Machine name'),
+    '#required' => FALSE,
+    '#maxlength' => 64,
+    '#machine_name' => array(
+      'exists' => '_telrhin_calendar_holiday_exists',
+      'source' => array('new', 'title'),
+    ),
+    '#weight' => 1,
+  );
+
+  $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array('#type' => 'submit', '#value' => t('Save configuration'));
   return $form;
 }
 
 /**
- * Validation handler: check and normalize the holiday date fields.
+ * Builds the name, dates and text fields for one holiday.
+ */
+function _telrhin_calendar_holiday_fields(array $holiday, $required = TRUE) {
+  return array(
+    'title' => array(
+      '#type' => 'textfield',
+      '#title' => t('Name'),
+      '#default_value' => $holiday['title'],
+      '#required' => $required,
+      '#maxlength' => 128,
+      '#weight' => 0,
+    ),
+    'dates' => array(
+      '#type' => 'textfield',
+      '#title' => t('Dates'),
+      '#default_value' => $holiday['dates'],
+      '#description' => t('Telrhin date, e.g. Parda 1. Separate several dates with commas; give a range as Bendel 8-14 or Kellet 28 to Melbid 2. Use "Year\'s End" for the day(s) after Romstil 31. Months (days): @months.', array('@months' => _telrhin_calendar_month_list())),
+      '#size' => 40,
+      '#required' => $required,
+      '#weight' => 2,
+    ),
+    'text' => array(
+      '#type' => 'textarea',
+      '#title' => t('Text'),
+      '#default_value' => $holiday['text'],
+      '#description' => t('Text to display during this holiday. HTML tags like &lt;h4&gt; and &lt;p&gt; are allowed.'),
+      '#rows' => 4,
+      '#weight' => 3,
+    ),
+  );
+}
+
+/**
+ * Machine-name "exists" callback for new holidays.
+ */
+function _telrhin_calendar_holiday_exists($key) {
+  $holidays = _telrhin_calendar_get_holidays();
+  return isset($holidays[$key]);
+}
+
+/**
+ * Validation handler: check and normalize holiday names and dates.
  */
 function telrhin_calendar_settings_form_validate($form, &$form_state) {
-  $holidays = _telrhin_calendar_flat_holidays();
+  $date_error = t('use Telrhin dates like Parda 1, separated by commas, ranges like Bendel 8-14 or Kellet 28 to Melbid 2, or Year\'s End. Check the day exists in that month.');
   $days = array();
-  foreach ($holidays as $key => $data) {
-    $field = 'telrhin_calendar_' . $key . '_dates';
-    $ranges = _telrhin_calendar_parse_dates($form_state['values'][$field]);
-    if ($ranges === FALSE) {
-      form_set_error($field, t('%holiday: use Telrhin dates like Parda 1, separated by commas, ranges like Bendel 8-14 or Kellet 28 to Melbid 2, or Year\'s End. Check the day exists in that month.', array('%holiday' => $data['title'])));
-      continue;
-    }
-    // Store a tidy version ("Bendel 6-7, Bendel 18").
-    form_set_value($form[$data['group']][$field], _telrhin_calendar_format_dates($ranges), $form_state);
-    foreach (_telrhin_calendar_expand_ranges($ranges) as $n) {
-      $days[$n][] = $data['title'];
+
+  if (!empty($form_state['values']['holidays'])) {
+    foreach ($form_state['values']['holidays'] as $key => $holiday) {
+      if (!empty($holiday['delete'])) {
+        continue;
+      }
+      $ranges = _telrhin_calendar_parse_dates($holiday['dates']);
+      if ($ranges === FALSE) {
+        form_set_error('holidays][' . $key . '][dates', t('%holiday: !error', array('%holiday' => $holiday['title'], '!error' => $date_error)));
+        continue;
+      }
+      // Store a tidy version ("Bendel 6-7, Bendel 18").
+      form_set_value($form['holidays'][$key]['dates'], _telrhin_calendar_format_dates($ranges), $form_state);
+      foreach (_telrhin_calendar_expand_ranges($ranges) as $n) {
+        $days[$n][] = $holiday['title'];
+      }
     }
   }
+
+  // Adding a holiday is optional; if any part of it is filled in, require
+  // a name, machine name and dates.
+  $new = $form_state['values']['new'];
+  if (trim($new['title']) !== '' || trim($new['dates']) !== '' || trim($new['text']) !== '') {
+    if (trim($new['title']) === '') {
+      form_set_error('new][title', t('Give the new holiday a name.'));
+    }
+    if ($new['key'] === '') {
+      form_set_error('new][key', t('Give the new holiday a machine name.'));
+    }
+    $ranges = _telrhin_calendar_parse_dates($new['dates']);
+    if ($ranges === FALSE) {
+      form_set_error('new][dates', t('New holiday: !error', array('!error' => $date_error)));
+    }
+    else {
+      form_set_value($form['new']['dates'], _telrhin_calendar_format_dates($ranges), $form_state);
+      foreach (_telrhin_calendar_expand_ranges($ranges) as $n) {
+        $days[$n][] = $new['title'];
+      }
+    }
+  }
+
   // Overlaps are allowed (single dates win over ranges), but point them out.
   $overlaps = array();
   ksort($days);
@@ -141,29 +318,59 @@ function telrhin_calendar_settings_form_validate($form, &$form_state) {
     }
   }
   if ($overlaps && !form_get_errors()) {
-    drupal_set_message(t('These days have more than one holiday: @list. Only one is shown: a single-day date wins over a range, otherwise the one listed first.', array('@list' => implode('; ', $overlaps))), 'warning');
+    drupal_set_message(t('These days have more than one holiday: @list. Only one is shown: a single-day date wins over a range, otherwise the one with the earlier first date.', array('@list' => implode('; ', $overlaps))), 'warning');
   }
 }
 
 /**
- * Submit handler (after system_settings_form_submit): show changes now.
+ * Submit handler: save all holidays, including additions and deletions.
  */
-function telrhin_calendar_settings_form_after_submit($form, &$form_state) {
-  // Anonymous page cache would otherwise keep the old holiday for up to an hour.
-  cache_clear_all();
-}
-
-/**
- * Returns all holidays keyed by machine name, with their group.
- */
-function _telrhin_calendar_flat_holidays() {
-  $flat = array();
-  foreach (_telrhin_calendar_get_holiday_defaults() as $group => $holidays) {
-    foreach ($holidays as $key => $data) {
-      $flat[$key] = $data + array('group' => $group);
+function telrhin_calendar_settings_form_submit($form, &$form_state) {
+  $holidays = array();
+  $deleted = array();
+  if (!empty($form_state['values']['holidays'])) {
+    foreach ($form_state['values']['holidays'] as $key => $holiday) {
+      if (!empty($holiday['delete'])) {
+        $deleted[] = $holiday['title'];
+        continue;
+      }
+      $holidays[$key] = array(
+        'title' => trim($holiday['title']),
+        'dates' => $holiday['dates'],
+        'text' => $holiday['text'],
+      );
     }
   }
-  return $flat;
+
+  $new = $form_state['values']['new'];
+  if ($new['key'] !== '' && trim($new['title']) !== '') {
+    $holidays[$new['key']] = array(
+      'title' => trim($new['title']),
+      'dates' => $new['dates'],
+      'text' => $new['text'],
+    );
+    drupal_set_message(t('Added %holiday.', array('%holiday' => trim($new['title']))));
+  }
+
+  variable_set('telrhin_calendar_holidays', $holidays);
+
+  // The per-holiday variables of the earlier version are now folded into
+  // telrhin_calendar_holidays; remove them so they can't come back.
+  db_delete('variable')
+    ->condition('name', db_like('telrhin_calendar_') . '%' . db_like('_dates'), 'LIKE')
+    ->execute();
+  db_delete('variable')
+    ->condition('name', db_like('telrhin_calendar_') . '%' . db_like('_text'), 'LIKE')
+    ->execute();
+  cache_clear_all('variables', 'cache_bootstrap');
+
+  if ($deleted) {
+    drupal_set_message(t('Deleted: %list.', array('%list' => implode(', ', $deleted))));
+  }
+  drupal_set_message(t('The configuration options have been saved.'));
+
+  // Anonymous page cache would otherwise keep the old holiday for up to an hour.
+  cache_clear_all();
 }
 
 /**
@@ -321,17 +528,17 @@ function _telrhin_calendar_expand_ranges(array $ranges) {
 /**
  * Returns the holiday text for a Telrhin day number, or '' if none.
  *
- * Single-day dates win over ranges; within each, the first holiday in the
- * definition order wins.
+ * Single-day dates win over ranges; within each, the holiday with the
+ * earlier first date (then name) wins.
  *
  * @param int $n
  *   Day of the Telrhin year (1-364), or 0 for Year's End.
  */
 function _telrhin_calendar_holiday_for_day($n) {
-  $holidays = _telrhin_calendar_flat_holidays();
   $single = $range = NULL;
-  foreach ($holidays as $key => $data) {
-    $ranges = _telrhin_calendar_parse_dates(variable_get('telrhin_calendar_' . $key . '_dates', $data['dates']));
+  $holidays = _telrhin_calendar_get_holidays();
+  foreach ($holidays as $key => $holiday) {
+    $ranges = _telrhin_calendar_parse_dates($holiday['dates']);
     if (!$ranges) {
       continue;
     }
@@ -350,10 +557,8 @@ function _telrhin_calendar_holiday_for_day($n) {
     }
   }
   $key = ($single !== NULL) ? $single : $range;
-  if ($key === NULL) {
-    return '';
-  }
-  return variable_get('telrhin_calendar_' . $key . '_text', $holidays[$key]['default']);
+  // Admin-entered HTML: allow the usual tags, strip scripts and handlers.
+  return ($key === NULL) ? '' : filter_xss_admin($holidays[$key]['text']);
 }
 
 /**
