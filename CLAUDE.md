@@ -24,6 +24,10 @@ Both connection functions live in `telrhin_functions.module` and pull credential
 
 - `maps/lowlands.php` — interactive Lowlands map at `https://telrhin.com/maps/lowlands.php`, deployed to `web/maps/` on the live site (outside Drupal's page system; `web/maps` is in Composer's `preserve-paths`). Bootstraps Drupal only to use `getzutdb()` and the output filters; never hard-code DB credentials here. Markers for encyclopedia entries of type 6 (settlement) and 8 (geographic) that have `MapGrid`/`MapGrid_Sub`; the map image is `downloads/lowlands_map.jpg`.
 
+## Site icons
+
+`favicon.ico` (16/32/48 px), `apple-touch-icon.png` (+ `apple-touch-icon-precomposed.png`, 180 px) and `icons/` (`favicon-32x32.png`, `icon-192.png`, `icon-512.png`) are deployed to the live docroot (`web/`). They're built from a square crop of the dragon head in `sites/default/files/telrhin-logo-2024.png` (1114×728) on the logo's cream background `#F6F3EA`, as 64-colour PNGs. `telrhin_preprocess_html()` adds the PNG/apple-touch links; the theme's "Shortcut icon" setting points at `favicon.ico`. These paths are in Composer's `preserve-paths` so core updates don't delete them, and Cloudflare has (or should have) a Skip rule for them so background icon fetchers aren't challenged.
+
 ## Legacy static assets
 
 Served from the live docroot at the same paths (`web/downloads/`, `web/old_php_files/assets/`); both are in Composer's `preserve-paths`. Content (node bodies, blocks) links to them by URL, so don't rename or move files without updating the links.
