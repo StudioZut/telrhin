@@ -2,25 +2,69 @@
 
 /**
  * @file
- * Provides blocks for displaying Encyclopaedia entries by region.
+ * Provides blocks listing Encyclopaedia entries by region.
+ *
+ * The blocks are defined on a settings page
+ * (admin/config/content/telrhin_region_entries): each block has an admin
+ * name, an optional subtitle and one or more regions from the external
+ * encyclopedia DB (Enc_Regions). Definitions are stored in the
+ * 'telrhin_region_entries_blocks' variable, keyed by block delta.
  */
+
+/**
+ * Returns the configured region blocks, keyed by block delta.
+ *
+ * Until the settings page is first saved, this returns the two blocks that
+ * used to be hard-coded, with the same deltas, so existing placements keep
+ * working.
+ *
+ * @return array
+ *   Delta => array('info' => string, 'subtitle' => string,
+ *   'regions' => int[]).
+ */
+function telrhin_region_entries_get_blocks() {
+  $defaults = array(
+    'encyc_south_east' => array(
+      'info' => 'Encyc: Southlands & Eastholm (Endorian Bay)',
+      'subtitle' => 'Entries with the Southlands & Eastholm (Endorian Bay):',
+      'regions' => array(2, 4),
+    ),
+    'encyc_westlands' => array(
+      'info' => 'Encyc: Borderlands of Wallendahr',
+      'subtitle' => 'Entries for the Borderlands of Wallendahr:',
+      'regions' => array(8),
+    ),
+  );
+  return variable_get('telrhin_region_entries_blocks', $defaults);
+}
+
+/**
+ * Implements hook_menu().
+ */
+function telrhin_region_entries_menu() {
+  $items['admin/config/content/telrhin_region_entries'] = array(
+    'title' => 'Telrhin region entry blocks',
+    'description' => 'Define blocks that list encyclopaedia entries for one or more regions.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('telrhin_region_entries_settings_form'),
+    'access arguments' => array('administer blocks'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  return $items;
+}
 
 /**
  * Implements hook_block_info().
  */
 function telrhin_region_entries_block_info() {
   $blocks = array();
-
-  $blocks['encyc_south_east'] = array(
-    'info' => t('Encyc: Southlands & Eastholm (Endorian Bay)'),
-    'cache' => DRUPAL_CACHE_PER_PAGE,
-  );
-  
-  $blocks['encyc_westlands'] = array(
-    'info' => t('Encyc: Borderlands of Wallendahr'),
-    'cache' => DRUPAL_CACHE_PER_PAGE,
-  );
-
+  foreach (telrhin_region_entries_get_blocks() as $delta => $definition) {
+    $blocks[$delta] = array(
+      // Plain text; the block admin escapes it.
+      'info' => $definition['info'],
+      'cache' => DRUPAL_CACHE_PER_PAGE,
+    );
+  }
   return $blocks;
 }
 
@@ -28,93 +72,290 @@ function telrhin_region_entries_block_info() {
  * Implements hook_block_view().
  */
 function telrhin_region_entries_block_view($delta = '') {
-  $block = array();
-
-  // Set the universal block title for all blocks in this module
-  $block['subject'] = t('Encyclopaedia Telrhinica');
-
-  switch ($delta) {
-    case 'encyc_south_east':
-      // Define the subtitle text for this specific block
-      $region_text = t('Entries with the Southlands & Eastholm (Endorian Bay):');
-      // Pass both the Region IDs and the subtitle text to the helper function
-      $block['content'] = _telrhin_region_entries_render_list(array(2, 4), $region_text);
-      break;
-
-    case 'encyc_westlands':
-      // Define the subtitle text for this specific block
-      $region_text = t('Entries for the Borderlands of Wallendahr:');
-      $block['content'] = _telrhin_region_entries_render_list(array(8), $region_text);
-      break;
+  $definitions = telrhin_region_entries_get_blocks();
+  if (!isset($definitions[$delta])) {
+    return array();
   }
+  $definition = $definitions[$delta];
 
-  return $block;
+  return array(
+    // Same title for every block in this module; can be overridden per block
+    // in the block admin.
+    'subject' => t('Encyclopaedia Telrhinica'),
+    'content' => _telrhin_region_entries_render_list($definition['regions'], $definition['subtitle']),
+  );
 }
 
 /**
- * Helper function: Executes the database query and formats the HTML.
- * * @param array $region_ids
- * An array of numeric Region IDs to filter by.
- * @param string $region_text
- * The descriptive subtitle to display above the list.
- * * @return string
- * The formatted HTML list.
+ * Settings form: edit, delete and add region blocks.
  */
-function _telrhin_region_entries_render_list($region_ids = array(), $region_text = '') {
-  // Ensure we have IDs to query
-  if (empty($region_ids)) {
+function telrhin_region_entries_settings_form($form, &$form_state) {
+  $region_options = _telrhin_region_entries_region_options();
+  if (!$region_options) {
+    drupal_set_message(t('Could not load the region list from the encyclopedia database, so regions cannot be changed right now.'), 'error');
+  }
+
+  $form['intro'] = array(
+    '#markup' => '<p>' . t('Each block lists the public encyclopaedia entries for the regions ticked below. Place the blocks on pages in the <a href="@url">block admin</a>.', array('@url' => url('admin/structure/block'))) . '</p>',
+  );
+
+  $form['blocks'] = array('#tree' => TRUE);
+  foreach (telrhin_region_entries_get_blocks() as $delta => $definition) {
+    $form['blocks'][$delta] = array(
+      '#type' => 'fieldset',
+      '#title' => check_plain($definition['info']),
+      '#description' => t('Block machine name: %delta', array('%delta' => $delta)),
+      '#collapsible' => TRUE,
+    );
+    $form['blocks'][$delta] += _telrhin_region_entries_block_fields($definition, $region_options);
+    $form['blocks'][$delta]['delete'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Delete this block'),
+      '#description' => t('It is also removed from any page it is placed on.'),
+    );
+  }
+
+  $form['new'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Add a region block'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#tree' => TRUE,
+  );
+  $form['new'] += _telrhin_region_entries_block_fields(array('info' => '', 'subtitle' => '', 'regions' => array()), $region_options, FALSE);
+  $form['new']['delta'] = array(
+    '#type' => 'machine_name',
+    '#title' => t('Block machine name'),
+    '#required' => FALSE,
+    '#maxlength' => 32,
+    '#machine_name' => array(
+      'exists' => '_telrhin_region_entries_delta_exists',
+      'source' => array('new', 'info'),
+    ),
+    '#weight' => -9,
+  );
+
+  $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array('#type' => 'submit', '#value' => t('Save configuration'));
+
+  return $form;
+}
+
+/**
+ * Builds the shared fields for one block definition.
+ */
+function _telrhin_region_entries_block_fields(array $definition, array $region_options, $required = TRUE) {
+  $fields['info'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Admin name'),
+    '#description' => t('Shown in the block admin list.'),
+    '#default_value' => $definition['info'],
+    '#required' => $required,
+    '#maxlength' => 128,
+    '#weight' => -10,
+  );
+  $fields['subtitle'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Subtitle'),
+    '#description' => t('Shown above the list, e.g. "Entries for the Borderlands of Wallendahr:". Leave empty for none.'),
+    '#default_value' => $definition['subtitle'],
+    '#maxlength' => 255,
+  );
+  if ($region_options) {
+    $fields['regions'] = array(
+      '#type' => 'checkboxes',
+      '#title' => t('Regions'),
+      '#options' => $region_options,
+      '#default_value' => array_values(array_intersect(array_map('intval', $definition['regions']), array_keys($region_options))),
+    );
+  }
+  else {
+    // DB unavailable: keep the saved regions untouched.
+    $fields['regions'] = array('#type' => 'value', '#value' => drupal_map_assoc($definition['regions']));
+  }
+  return $fields;
+}
+
+/**
+ * Form validation handler.
+ */
+function telrhin_region_entries_settings_form_validate($form, &$form_state) {
+  $values = $form_state['values'];
+
+  if (!empty($values['blocks'])) {
+    foreach ($values['blocks'] as $delta => $block) {
+      if (empty($block['delete']) && !array_filter($block['regions'])) {
+        form_set_error('blocks][' . $delta . '][regions', t('Tick at least one region for %name, or delete it.', array('%name' => $block['info'])));
+      }
+    }
+  }
+
+  // Adding a block is optional; if any part of it is filled in, require all.
+  $new = $values['new'];
+  $started = trim($new['info']) !== '' || trim($new['subtitle']) !== '' || array_filter($new['regions']);
+  if ($started) {
+    if (trim($new['info']) === '') {
+      form_set_error('new][info', t('Give the new block an admin name.'));
+    }
+    if ($new['delta'] === '') {
+      form_set_error('new][delta', t('Give the new block a machine name.'));
+    }
+    if (!array_filter($new['regions'])) {
+      form_set_error('new][regions', t('Tick at least one region for the new block.'));
+    }
+  }
+}
+
+/**
+ * Form submit handler.
+ */
+function telrhin_region_entries_settings_form_submit($form, &$form_state) {
+  $values = $form_state['values'];
+  $blocks = array();
+  $deleted = array();
+
+  if (!empty($values['blocks'])) {
+    foreach ($values['blocks'] as $delta => $block) {
+      if (!empty($block['delete'])) {
+        $deleted[] = $delta;
+        continue;
+      }
+      $blocks[$delta] = _telrhin_region_entries_clean_definition($block);
+    }
+  }
+
+  $new = $values['new'];
+  if ($new['delta'] !== '' && trim($new['info']) !== '') {
+    $blocks[$new['delta']] = _telrhin_region_entries_clean_definition($new);
+    drupal_set_message(t('Added %name. Place it in the <a href="@url">block admin</a>.', array('%name' => $new['info'], '@url' => url('admin/structure/block'))));
+  }
+
+  variable_set('telrhin_region_entries_blocks', $blocks);
+
+  // Remove placements of deleted blocks and refresh cached block output.
+  if ($deleted) {
+    db_delete('block')->condition('module', 'telrhin_region_entries')->condition('delta', $deleted, 'IN')->execute();
+    db_delete('block_role')->condition('module', 'telrhin_region_entries')->condition('delta', $deleted, 'IN')->execute();
+    drupal_set_message(format_plural(count($deleted), 'Deleted 1 block.', 'Deleted @count blocks.'));
+  }
+  cache_clear_all('telrhin_region_entries:', 'cache_block', TRUE);
+  drupal_set_message(t('The configuration options have been saved.'));
+}
+
+/**
+ * Normalizes submitted values into a stored block definition.
+ */
+function _telrhin_region_entries_clean_definition(array $block) {
+  return array(
+    'info' => trim($block['info']),
+    'subtitle' => trim($block['subtitle']),
+    'regions' => array_values(array_map('intval', array_filter($block['regions']))),
+  );
+}
+
+/**
+ * Machine-name "exists" callback for new block deltas.
+ */
+function _telrhin_region_entries_delta_exists($delta) {
+  $blocks = telrhin_region_entries_get_blocks();
+  return isset($blocks[$delta]);
+}
+
+/**
+ * Returns RegionID => Name from the external encyclopedia DB.
+ */
+function _telrhin_region_entries_region_options() {
+  $db = getzutdb();
+  if (!$db) {
+    return array();
+  }
+  $options = array();
+  $result = mysqli_query($db, 'SELECT RegionID, Name FROM Enc_Regions ORDER BY Name');
+  if ($result) {
+    while ($row = mysqli_fetch_assoc($result)) {
+      $options[(int) $row['RegionID']] = check_plain(_telrhin_region_entries_to_utf8($row['Name']));
+    }
+  }
+  mysqli_close($db);
+  return $options;
+}
+
+/**
+ * Converts a value from the external encyclopedia DB to valid UTF-8.
+ *
+ * The DB connection is latin1 and some rows hold Windows-1252 bytes (curly
+ * quotes, non-breaking spaces); check_plain() returns '' for invalid UTF-8.
+ */
+function _telrhin_region_entries_to_utf8($value) {
+  $value = (string) $value;
+  return drupal_validate_utf8($value) ? $value : mb_convert_encoding($value, 'UTF-8', 'Windows-1252');
+}
+
+/**
+ * Turns a stored (possibly HTML) description into plain text.
+ */
+function _telrhin_region_entries_plain_text($value) {
+  $text = _telrhin_region_entries_to_utf8($value);
+  // Put a space before each tag so "</p><p>" doesn't join two words.
+  $text = strip_tags(str_replace('<', ' <', $text));
+  $text = decode_entities($text);
+  return trim(preg_replace('/[\s\x{00A0}]+/u', ' ', $text));
+}
+
+/**
+ * Builds the HTML list of public entries for the given regions.
+ *
+ * @param array $region_ids
+ *   Numeric region IDs (Enc_Regions.RegionID).
+ * @param string $region_text
+ *   Subtitle shown above the list (plain text).
+ *
+ * @return string
+ *   The list HTML.
+ */
+function _telrhin_region_entries_render_list(array $region_ids, $region_text = '') {
+  $region_ids = array_filter(array_map('intval', $region_ids));
+  if (!$region_ids) {
     return '';
   }
 
-  // Connect to your external database
-  $query = getzutdb();
-  if (!$query) {
-    return '<p>Error: Could not connect to the encyclopedia database.</p>';
+  $db = getzutdb();
+  if (!$db) {
+    return '<p>' . t('The encyclopaedia is temporarily unavailable.') . '</p>';
   }
 
-  // Security step: Force all inputs to be integers to prevent SQL injection,
-  // then implode them back into a comma-separated string (e.g., "2,4").
-  $clean_ids = implode(',', array_map('intval', $region_ids));
+  // IDs are integers from the settings, so they're safe to inline.
+  // DISTINCT: an entry in more than one of the regions is listed once.
+  $sql = 'SELECT DISTINCT t.EntryID, t.Name, t.Description_Public
+    FROM Telrhin t
+    JOIN Enc_Regions_Assoc a ON t.EntryID = a.EntryID
+    WHERE t.Work_New = 1 AND t.isReligion = 0 AND a.RegionID IN (' . implode(',', $region_ids) . ')
+    ORDER BY t.Name ASC';
+  $result = mysqli_query($db, $sql);
+  if (!$result) {
+    watchdog('telrhin_region_entries', 'Query failed: @error', array('@error' => mysqli_error($db)), WATCHDOG_ERROR);
+    mysqli_close($db);
+    return '<p>' . t('The encyclopaedia is temporarily unavailable.') . '</p>';
+  }
+  $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
+  mysqli_close($db);
 
-  $sql = "
-    SELECT Telrhin.EntryID, Telrhin.Name, Telrhin.Description_Public 
-    FROM Telrhin 
-    LEFT JOIN Enc_Regions_Assoc 
-      ON Telrhin.EntryID = Enc_Regions_Assoc.EntryID 
-    WHERE Telrhin.Work_New = 1 
-      AND Telrhin.isReligion = 0 
-      AND Enc_Regions_Assoc.RegionID IN ($clean_ids) 
-    ORDER BY Telrhin.Name ASC
-  ";
-  
-  $result = mysqli_query($query, $sql);
-
-  // Handle empty states gracefully
-  if (!$result || mysqli_num_rows($result) == 0) {
-    return '<p>No entries found for this region.</p>';
+  if (!$rows) {
+    return '<p>' . t('No entries found for this region.') . '</p>';
   }
 
-  // Build the HTML
   $output = '';
-  
-  // Add the descriptive subtitle text right before the list
-  if (!empty($region_text)) {
-    $output .= '<h4>' . $region_text . '</h4>';
+  if ($region_text !== '') {
+    $output .= '<h4>' . check_plain($region_text) . '</h4>';
   }
-
-  $output .= '<div style="margin-top: 1em; font-size:.8em; line-height:1.3em;">';
-  $output .= '<ul>';
-
-  // Loop through the results and build list items
-  while ($row = mysqli_fetch_assoc($result)) {
-    // Wrap database output in htmlspecialchars to prevent XSS formatting bugs
-    $id = (int) $row['EntryID'];
-    $name = htmlspecialchars($row['Name']);
-    $desc = htmlspecialchars($row['Description_Public']);
-    
-    $output .= "<li><strong><a href='/encyc/view?encycid={$id}' title='full view this record'>{$name}</a></strong><br />{$desc}</li>";
+  $output .= '<div style="margin-top: 1em; font-size:.8em; line-height:1.3em;"><ul>';
+  foreach ($rows as $row) {
+    $link = l(_telrhin_region_entries_to_utf8($row['Name']), 'encyc/view', array(
+      'query' => array('encycid' => (int) $row['EntryID']),
+      'attributes' => array('title' => 'full view this record'),
+    ));
+    $output .= '<li><strong>' . $link . '</strong><br />' . check_plain(_telrhin_region_entries_plain_text($row['Description_Public'])) . '</li>';
   }
-
   $output .= '</ul></div>';
 
   return $output;
