@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for telrhin_calendar.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function telrhin_calendar_uninstall() {
+  variable_del('telrhin_calendar_holidays');
+  // Per-holiday variables from earlier versions.
+  db_delete('variable')
+    ->condition('name', db_like('telrhin_calendar_') . '%', 'LIKE')
+    ->execute();
+  cache_clear_all('variables', 'cache_bootstrap');
+}
