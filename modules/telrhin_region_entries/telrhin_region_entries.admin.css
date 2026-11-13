@@ -1,0 +1,18 @@
+/**
+ * Settings page (admin/config/content/telrhin_region_entries):
+ * show the region checkboxes in columns instead of one long list.
+ */
+.telrhin-region-checkboxes {
+  column-count: 4;
+  column-gap: 2em;
+}
+.telrhin-region-checkboxes .form-item {
+  break-inside: avoid;
+  margin-top: 0;
+}
+@media (max-width: 900px) {
+  .telrhin-region-checkboxes { column-count: 2; }
+}
+@media (max-width: 500px) {
+  .telrhin-region-checkboxes { column-count: 1; }
+}
