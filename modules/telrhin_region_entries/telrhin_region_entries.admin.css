@@ -2,17 +2,57 @@
  * Settings page (admin/config/content/telrhin_region_entries):
  * show the region checkboxes in columns instead of one long list.
  */
-.telrhin-region-checkboxes {
+/* Columns go on the list of checkboxes itself; "avoid" applies only to each
+   checkbox (not the wrapper around the whole list, which would stop the
+   list from splitting at all). */
+.telrhin-region-checkboxes .form-checkboxes {
   column-count: 4;
   column-gap: 2em;
 }
-.telrhin-region-checkboxes .form-item {
+.telrhin-region-checkboxes .form-type-checkbox {
   break-inside: avoid;
   margin-top: 0;
 }
 @media (max-width: 900px) {
-  .telrhin-region-checkboxes { column-count: 2; }
+  .telrhin-region-checkboxes .form-checkboxes { column-count: 2; }
 }
 @media (max-width: 500px) {
-  .telrhin-region-checkboxes { column-count: 1; }
+  .telrhin-region-checkboxes .form-checkboxes { column-count: 1; }
+}
+
+/**
+ * Section headings that wrap onto two lines (long block names plus the
+ * region summary, mostly on narrow screens). Seven positions the heading
+ * absolutely over a fixed 2.5em top padding, so a second line spills out of
+ * the box. Put the heading back in normal flow so the box grows to fit.
+ */
+#telrhin-region-entries-settings-form fieldset {
+  padding-top: 0;
+}
+#telrhin-region-entries-settings-form fieldset::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+#telrhin-region-entries-settings-form fieldset > legend {
+  float: left;
+  width: 100%;
+  padding: 0;
+}
+#telrhin-region-entries-settings-form fieldset .fieldset-legend {
+  position: static;
+  margin: 0;
+  padding: 0.75em 15px 0.75em 15px;
+}
+#telrhin-region-entries-settings-form fieldset .fieldset-wrapper {
+  clear: both;
+}
+/* Let sections shrink to narrow screens (fieldsets default to their
+   content's width) and keep the 60-character text fields inside them. */
+#telrhin-region-entries-settings-form fieldset {
+  min-width: 0;
+}
+#telrhin-region-entries-settings-form .form-text {
+  max-width: 100%;
+  box-sizing: border-box;
 }
