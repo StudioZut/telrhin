@@ -121,6 +121,9 @@ function telrhin_region_entries_settings_form($form, &$form_state) {
       '#type' => 'checkbox',
       '#title' => t('Delete this block'),
       '#description' => t('It is also removed from any page it is placed on.'),
+      // Set apart from the region list (telrhin_region_entries.admin.css).
+      '#prefix' => '<div class="telrhin-region-delete">',
+      '#suffix' => '</div>',
     );
   }
 
