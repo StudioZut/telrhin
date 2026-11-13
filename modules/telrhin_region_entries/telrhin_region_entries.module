@@ -95,17 +95,26 @@ function telrhin_region_entries_settings_form($form, &$form_state) {
     drupal_set_message(t('Could not load the region list from the encyclopedia database, so regions cannot be changed right now.'), 'error');
   }
 
+  $form['#attached']['css'][] = drupal_get_path('module', 'telrhin_region_entries') . '/telrhin_region_entries.admin.css';
+
   $form['intro'] = array(
     '#markup' => '<p>' . t('Each block lists the public encyclopaedia entries for the regions ticked below. Place the blocks on pages in the <a href="@url">block admin</a>.', array('@url' => url('admin/structure/block'))) . '</p>',
   );
 
   $form['blocks'] = array('#tree' => TRUE);
   foreach (telrhin_region_entries_get_blocks() as $delta => $definition) {
+    // Collapsed by default; the title summarizes the selected regions.
+    // (Drupal expands a collapsed fieldset that contains a form error.)
+    $region_names = array();
+    foreach ($definition['regions'] as $rid) {
+      $region_names[] = isset($region_options[$rid]) ? $region_options[$rid] : t('region @id', array('@id' => $rid));
+    }
     $form['blocks'][$delta] = array(
       '#type' => 'fieldset',
-      '#title' => check_plain($definition['info']),
+      '#title' => check_plain($definition['info']) . ($region_names ? ' — ' . implode(', ', $region_names) : ''),
       '#description' => t('Block machine name: %delta', array('%delta' => $delta)),
       '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
     );
     $form['blocks'][$delta] += _telrhin_region_entries_block_fields($definition, $region_options);
     $form['blocks'][$delta]['delete'] = array(
@@ -166,6 +175,10 @@ function _telrhin_region_entries_block_fields(array $definition, array $region_o
       '#type' => 'checkboxes',
       '#title' => t('Regions'),
       '#options' => $region_options,
+      // Laid out in columns (telrhin_region_entries.admin.css). A wrapper
+      // div, because #attributes would be copied onto every checkbox.
+      '#prefix' => '<div class="telrhin-region-checkboxes">',
+      '#suffix' => '</div>',
       '#default_value' => array_values(array_intersect(array_map('intval', $definition['regions']), array_keys($region_options))),
     );
   }
