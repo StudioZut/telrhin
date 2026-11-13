@@ -21,6 +21,19 @@ div { margin-bottom: .5em; }
 /* custom classes, mostly holdovers from the earlier themes */
 .captions1 { font-size: 11px; }
 
+/* bordered call-out box, used in body fields */
+.boxout {
+  padding: 16px;
+  margin: 0 0 20px;
+  font-size: 16px;
+  border: 1px solid #000;
+}
+
+/* space between buttons (hand-made button rows in body fields, blog tags) */
+.btn { margin-right: .5em; margin-bottom: .5em; }
+/* ...but not buttons attached to a text box, e.g. the search form */
+.input-group-btn .btn { margin-right: 0; margin-bottom: 0; }
+
 /* cell padding for tables */
 td, th { padding: .5em; }
 
@@ -29,14 +42,10 @@ td, th { padding: .5em; }
   margin-top: 1em;
 }
 
-/* blog post tags as buttons (classes added in template.php); keep them on one line */
+/* blog post tags as buttons (classes added in template.php, spacing from .btn above); keep them on one line */
 .field-name-field-tags .field-item {
   display: inline-block;
   margin-bottom: 0;
-}
-.field-name-field-tags .field-item a.btn {
-  margin-right: .5em;
-  margin-bottom: .5em;
 }
 
 /* blog post date line ("Posted ..." set in template.php): own line, paragraph spacing below */
