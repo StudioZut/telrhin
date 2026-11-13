@@ -1,5 +1,7 @@
 name = Telrhin Region Entries
-description = Provides blocks for displaying Encyclopaedia entries filtered by specific regions.
+description = Provides blocks for displaying Encyclopaedia entries filtered by region. Blocks are defined on a settings page.
 core = 7.x
-version = 7.x-1.0
+version = 7.x-1.1
 package = Zutworks
+dependencies[] = telrhin_functions
+configure = admin/config/content/telrhin_region_entries

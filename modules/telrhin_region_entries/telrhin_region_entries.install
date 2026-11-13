@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for telrhin_region_entries.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function telrhin_region_entries_uninstall() {
+  variable_del('telrhin_region_entries_blocks');
+}
