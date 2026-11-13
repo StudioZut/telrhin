@@ -42,6 +42,11 @@ td, th { padding: .5em; }
   margin-top: 1em;
 }
 
+/* space above the blog post "Tags:" label (overrides the 1em above) */
+.field-name-field-tags.field-type-taxonomy-term-reference {
+  margin-top: 2em;
+}
+
 /* blog post tags as buttons (classes added in template.php, spacing from .btn above); keep them on one line */
 .field-name-field-tags .field-item {
   display: inline-block;
