@@ -39,6 +39,14 @@ td, th { padding: .5em; }
   margin-bottom: .5em;
 }
 
+/* blog post date line ("Posted ..." set in template.php): own line, paragraph spacing below */
+.node-siteblog .submitted,
+.node-blog .submitted {
+  display: block;
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
 /* hide taxonomy block under posts */
 .field-name-taxonomy-vocabulary-1.field-type-taxonomy-term-reference.field-label-above {
   display: none;

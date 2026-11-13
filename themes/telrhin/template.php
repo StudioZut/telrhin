@@ -19,3 +19,20 @@ function telrhin_preprocess_field(&$variables) {
     }
   }
 }
+
+/**
+ * Implements hook_preprocess_node().
+ *
+ * Blog posts (current "siteblog" and older "blog" types) show only the date,
+ * as "Posted November 11, 2026", with no author name or picture. Spacing below the line
+ * is in css/style.css.
+ */
+function telrhin_preprocess_node(&$variables) {
+  if (in_array($variables['type'], array('siteblog', 'blog'), TRUE)) {
+    $variables['submitted'] = t('Posted @date', array(
+      '@date' => format_date($variables['created'], 'custom', 'F j, Y'),
+    ));
+    // The template prints the author picture in the same line; drop it too.
+    $variables['user_picture'] = '';
+  }
+}
